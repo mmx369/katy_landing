@@ -120,13 +120,29 @@ h4 {
 .hero-main-card {
   position: relative;
   z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.03)),
+    rgba(255, 255, 255, 0.02);
   box-shadow:
-    0 30px 80px rgba(30, 40, 80, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(18px);
+    0 14px 36px rgba(30, 40, 80, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(26px) saturate(142%);
   animation: heroCardFloat 9s ease-in-out infinite;
+}
+
+.hero-main-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.05) 36%,
+    rgba(255, 255, 255, 0) 70%
+  );
 }
 
 .hero-stat-card {
@@ -144,11 +160,11 @@ h4 {
   inset: 1.25rem;
   border-radius: 26px;
   background-image: url("/hero-eye-reference-full.png");
-  background-size: 120% auto;
-  background-position: calc(100% + 72px) 18%;
+  background-size: 124% auto;
+  background-position: calc(100% + 320px) 18%;
   background-repeat: no-repeat;
-  opacity: 0.82;
-  filter: contrast(0.92) brightness(1.02);
+  opacity: 0.9;
+  filter: contrast(0.94) brightness(1.02);
   animation: heroPhotoDrift 16s ease-in-out infinite;
 }
 
@@ -160,10 +176,11 @@ h4 {
   pointer-events: none;
   background: linear-gradient(
     to right,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.85) 40%,
-    rgba(255, 255, 255, 0.4) 70%,
-    transparent 100%
+    rgba(243, 244, 248, 0.52) 0%,
+    rgba(243, 244, 248, 0.22) 24%,
+    rgba(255, 255, 255, 0.04) 48%,
+    rgba(255, 255, 255, 0.16) 72%,
+    rgba(255, 255, 255, 0.46) 100%
   );
 }
 

@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 import { FadeIn } from "@/components/motion/fade-in";
 import { AnimatedBackgroundBlobs } from "@/components/sections/animated-background-blobs";
 import { Button } from "@/components/ui/button";
@@ -14,8 +18,33 @@ export function HeroSection() {
             <div className="hero-photo-layer hidden lg:block" />
             <div className="hero-overlay" aria-hidden="true" />
             <div className="hero-glow hidden lg:block" aria-hidden="true" />
-            <div className="relative z-20 flex max-w-3xl flex-col gap-5 lg:max-w-[52%]">
-              <div className="hero-main-card rounded-3xl p-6 sm:p-8">
+            <motion.div
+              className="relative z-20 flex max-w-3xl flex-col gap-5 lg:max-w-[52%]"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.12,
+                    delayChildren: 0.08,
+                  },
+                },
+              }}
+            >
+              <motion.div
+                className="hero-main-card rounded-3xl p-6 sm:p-8"
+                variants={{
+                  hidden: { opacity: 0, y: 18, scale: 0.985, filter: "blur(8px)" },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    filter: "blur(0px)",
+                    transition: { duration: 0.65, ease: "easeOut" },
+                  },
+                }}
+              >
                 <p className="mb-5 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-muted)]">
                   Бюро маркетинговых исследований
                 </p>
@@ -37,22 +66,40 @@ export function HeroSection() {
                     </Button>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
-              <dl className="grid gap-3 sm:grid-cols-3">
+              <motion.dl
+                className="grid gap-3 sm:grid-cols-3"
+                variants={{
+                  hidden: { opacity: 0, y: 12 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.5, ease: "easeOut" },
+                  },
+                }}
+              >
                 {homeMetrics.map((metric) => (
-                  <div
+                  <motion.div
                     key={metric.label}
                     className="hero-stat-card rounded-2xl p-4"
+                    variants={{
+                      hidden: { opacity: 0, y: 10 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        transition: { duration: 0.4, ease: "easeOut" },
+                      },
+                    }}
                   >
                     <dt className="text-xl font-semibold text-[var(--color-midnight)]">{metric.value}</dt>
                     <dd className="mt-1 text-xs leading-relaxed text-[var(--color-muted)]">
                       {metric.label}
                     </dd>
-                  </div>
+                  </motion.div>
                 ))}
-              </dl>
-            </div>
+              </motion.dl>
+            </motion.div>
           </div>
         </FadeIn>
       </SectionContainer>
