@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Insightframe Landing
 
-## Getting Started
+Премиальный лендинг маркетингового исследовательского агентства на Next.js (App Router), TypeScript и Tailwind CSS.
 
-First, run the development server:
+## Стек
+
+- Next.js 16 (App Router)
+- TypeScript
+- Tailwind CSS v4
+- Framer Motion (минимальная анимация reveal/background)
+- Lucide Icons
+
+## Запуск
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Production-проверка:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run lint
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Отправка заявок на email
 
-## Learn More
+Формы `Оставить заявку` и `Контакты` отправляют данные через `POST /api/contact` (Route Handler) на SMTP.
 
-To learn more about Next.js, take a look at the following resources:
+1. Скопируйте `.env.example` в `.env.local`
+2. Заполните SMTP-переменные:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=mailer@example.com
+SMTP_PASS=your_password_here
+SMTP_FROM="Decode Research <mailer@example.com>"
+CONTACT_RECEIVER_EMAIL=e.savastenko@mail.ru
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+После этого отправка из форм уходит на `CONTACT_RECEIVER_EMAIL`.
 
-## Deploy on Vercel
+## Структура проекта
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+src/
+  app/
+    page.tsx
+    about/page.tsx
+    research-solutions/page.tsx
+    marketplaces/page.tsx
+    knowledge-base/page.tsx
+    contacts/page.tsx
+    request/page.tsx
+    privacy/page.tsx
+  components/
+    forms/
+    layout/
+    motion/
+    sections/
+    ui/
+  data/
+    about.ts
+    contact.ts
+    home.ts
+    knowledge.ts
+    marketplace.ts
+    navigation.ts
+    solutions.ts
+  lib/
+    seo.ts
+  types/
+    content.ts
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Как расширять
+
+- Контент секций хранится в `src/data/*` - можно добавлять новые карточки и блоки без изменения UI-логики.
+- Каталог методик масштабируется через `methodCards` в `src/data/solutions.ts`.
+- База знаний масштабируется через `knowledgeArticles` в `src/data/knowledge.ts`.
+- Базовые SEO-параметры страниц централизованы через `buildMetadata` в `src/lib/seo.ts`.
