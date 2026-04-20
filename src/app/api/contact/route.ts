@@ -249,13 +249,13 @@ export async function POST(request: Request) {
         pass: smtpPass,
       },
     });
+    await transport.verify();
 
     const subjectPrefix = payload.variant === "request" ? "Новая заявка" : "Новое сообщение";
     const companyLine =
       payload.variant === "request"
         ? `<p><strong>Компания:</strong> ${escapeHtml(payload.company || "Не указана")}</p>`
         : "";
-
     await transport.sendMail({
       from: smtpFrom,
       to: recipient,

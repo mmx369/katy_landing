@@ -23,15 +23,15 @@ type ButtonProps = LinkButtonProps | NativeButtonProps;
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "border border-transparent bg-[linear-gradient(135deg,#4F46E5,#7C3AED)] text-white shadow-[0_10px_30px_rgba(99,102,241,0.4),inset_0_1px_0_rgba(255,255,255,0.35)] hover:shadow-[0_14px_42px_rgba(99,102,241,0.48),inset_0_1px_0_rgba(255,255,255,0.42)] hover:brightness-110 hover:-translate-y-0.5",
+    "border border-transparent bg-[linear-gradient(135deg,#4F46E5,#7C3AED)] text-white shadow-[0_10px_30px_rgba(99,102,241,0.4),inset_0_1px_0_rgba(255,255,255,0.35)] enabled:hover:shadow-[0_14px_42px_rgba(99,102,241,0.48),inset_0_1px_0_rgba(255,255,255,0.42)] enabled:hover:brightness-110 enabled:hover:-translate-y-0.5",
   secondary:
-    "bg-white/80 text-[var(--color-midnight)] border border-[var(--color-border-strong)] hover:bg-white",
+    "bg-white/80 text-[var(--color-midnight)] border border-[var(--color-border-strong)] enabled:hover:bg-white",
   ghost:
-    "bg-transparent text-[var(--color-midnight)] border border-transparent hover:bg-white/70",
+    "bg-transparent text-[var(--color-midnight)] border border-transparent enabled:hover:bg-white/70",
 };
 
 const baseClassName =
-  "inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold tracking-tight transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)] disabled:pointer-events-none disabled:opacity-70";
+  "inline-flex cursor-pointer items-center justify-center rounded-full px-6 py-3 text-sm font-semibold tracking-tight transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)] disabled:cursor-not-allowed disabled:opacity-70";
 
 export function Button(props: ButtonProps) {
   const variant = props.variant ?? "primary";
