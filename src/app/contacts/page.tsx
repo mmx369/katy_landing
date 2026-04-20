@@ -97,6 +97,7 @@ export default function ContactsPage() {
                         src={member.photo}
                         alt={member.name}
                         fill
+                        sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
                         className="object-cover grayscale contrast-105 transition duration-500 group-hover:scale-[1.02] group-hover:brightness-105"
                         style={{
                           objectPosition: member.photoPosition ?? "50% 30%",

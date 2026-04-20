@@ -10,7 +10,7 @@ export function SolutionSectionCard({ section }: SolutionSectionCardProps) {
     <Card className="p-0">
       <div className="grid gap-0 lg:grid-cols-[1.1fr_1fr_1fr]">
         <div className="border-b border-[var(--color-border)] p-6 lg:border-b-0 lg:border-r">
-          <h2 className="text-[30px] font-semibold leading-[1.06] text-[#D10010] sm:text-[36px] sm:leading-[1.02]">
+          <h2 className="text-[30px] font-semibold leading-[1.06] text-[var(--color-accent-berry)] sm:text-[36px] sm:leading-[1.02]">
             {section.title}
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-[var(--color-muted-strong)]">

@@ -78,14 +78,14 @@ export default function MarketplacesPage() {
 
                     <div className="group relative mt-6 overflow-hidden rounded-2xl border border-[rgba(108,92,231,0.18)] bg-white shadow-[0_14px_36px_rgba(22,30,58,0.12)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[rgba(108,92,231,0.3)] hover:shadow-[0_22px_54px_rgba(22,30,58,0.18)]">
                       <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(135deg,rgba(255,255,255,0.28),rgba(255,255,255,0)_42%,rgba(108,92,231,0.08))] opacity-90 transition-opacity duration-300 group-hover:opacity-100" />
-                      <div className="overflow-x-auto">
-                        <div className="min-w-[560px] sm:min-w-0">
+                      <div className="overflow-x-auto overflow-y-hidden sm:overflow-hidden">
+                        <div className="min-w-[560px] overflow-hidden sm:min-w-0">
                           <Image
                             src={block.imageSrc}
                             alt={block.imageAlt}
                             width={1800}
                             height={1000}
-                            className="h-auto w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                            className="block h-auto w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.008]"
                           />
                         </div>
                       </div>
