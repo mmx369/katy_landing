@@ -12,7 +12,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Маркетплейсы - Decode Research",
   description:
-    "Аудит карточек и сессии восприятия для роста вовлечения и конверсии на маркетплейсах.",
+    "Аудит карточек и сессии восприятия для маркетплейсов: выявляем барьеры покупки, улучшаем структуру карточки и повышаем конверсию.",
   path: "/marketplaces",
 });
 

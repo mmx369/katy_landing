@@ -8,7 +8,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "База знаний - Decode Research",
   description:
-    "Материалы агентства: исследования, бренд, клиентский опыт, маркетплейсы и продукт.",
+    "База знаний Decode Research по маркетинговым исследованиям: сегментации, CustDev, JTBD, NPS, CJM, бренд, клиентский опыт и маркетплейсы.",
   path: "/knowledge-base",
 });
 

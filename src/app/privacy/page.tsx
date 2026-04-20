@@ -6,8 +6,10 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Политика конфиденциальности - Decode Research",
-  description: "Базовая политика обработки данных и контактная информация.",
+  description:
+    "Политика конфиденциальности Decode Research: как мы обрабатываем контактные данные и используем информацию из заявок.",
   path: "/privacy",
+  noIndex: true,
 });
 
 export default function PrivacyPage() {

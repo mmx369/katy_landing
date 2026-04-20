@@ -10,7 +10,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Оставить заявку - Decode Research",
   description:
-    "Опишите бизнес-задачу, и мы предложим подход, сроки и формат исследования.",
+    "Оставьте заявку на маркетинговое исследование: опишите задачу, а команда Decode Research предложит подход, сроки и формат проекта.",
   path: "/request",
 });
 

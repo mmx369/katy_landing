@@ -12,7 +12,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Контакты - Decode Research",
-  description: "Свяжитесь с командой Decode Research и обсудите исследовательскую задачу.",
+  description:
+    "Свяжитесь с Decode Research: обсудим маркетинговое исследование, задачи бренда, продукта, CX или маркетплейсов и предложим формат проекта.",
   path: "/contacts",
 });
 
