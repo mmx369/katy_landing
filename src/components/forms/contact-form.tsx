@@ -45,18 +45,15 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isContactVariant = variant === "contact";
-
   const errors = useMemo(() => {
     return {
       name: form.name.trim().length < MIN_NAME_LENGTH,
       company:
-        !isContactVariant &&
-        (form.company.trim().length < MIN_COMPANY_LENGTH || form.company.trim().length > COMPANY_MAX_LENGTH),
+        form.company.trim().length < MIN_COMPANY_LENGTH || form.company.trim().length > COMPANY_MAX_LENGTH,
       task: form.task.trim().length < MIN_TASK_LENGTH || form.task.trim().length > TASK_MAX_LENGTH,
       contact: form.contact.trim().length > CONTACT_MAX_LENGTH || !isValidContact(form.contact),
     };
-  }, [form, isContactVariant]);
+  }, [form]);
 
   const hasErrors = Object.values(errors).some(Boolean);
 
@@ -166,30 +163,28 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
         ) : null}
       </div>
 
-      {!isContactVariant ? (
-        <div>
-          <label className="text-sm font-medium text-[var(--color-midnight)]" htmlFor="company">
-            Компания
-          </label>
-          <input
-            id="company"
-            name="company"
-            value={form.company}
-            onBlur={() => setTouched((prev) => ({ ...prev, company: true }))}
-            onChange={(event) => handleChange("company", event.target.value)}
-            className={inputClassName}
-            placeholder="Название компании"
-            autoComplete="organization"
-            maxLength={COMPANY_MAX_LENGTH}
-            required
-          />
-          {touched.company && errors.company ? (
-            <p className="mt-2 text-xs text-[var(--color-error)]">
-              Укажите компанию или проект.
-            </p>
-          ) : null}
-        </div>
-      ) : null}
+      <div>
+        <label className="text-sm font-medium text-[var(--color-midnight)]" htmlFor="company">
+          Компания
+        </label>
+        <input
+          id="company"
+          name="company"
+          value={form.company}
+          onBlur={() => setTouched((prev) => ({ ...prev, company: true }))}
+          onChange={(event) => handleChange("company", event.target.value)}
+          className={inputClassName}
+          placeholder="Название компании"
+          autoComplete="organization"
+          maxLength={COMPANY_MAX_LENGTH}
+          required
+        />
+        {touched.company && errors.company ? (
+          <p className="mt-2 text-xs text-[var(--color-error)]">
+            Укажите компанию или проект.
+          </p>
+        ) : null}
+      </div>
 
       <div>
         <label className="text-sm font-medium text-[var(--color-midnight)]" htmlFor="task">

@@ -16,7 +16,7 @@ import {
 
 interface ContactPayload {
   name: string;
-  company?: string;
+  company: string;
   task: string;
   contact: string;
   variant: "request" | "contact";
@@ -56,6 +56,7 @@ function isValidPayload(payload: unknown): payload is ContactPayload {
   return (
     (candidate.variant === "request" || candidate.variant === "contact") &&
     typeof candidate.name === "string" &&
+    typeof candidate.company === "string" &&
     typeof candidate.task === "string" &&
     typeof candidate.contact === "string" &&
     (candidate.companyWebsite === undefined || typeof candidate.companyWebsite === "string")
@@ -205,15 +206,14 @@ export async function POST(request: Request) {
       !isValidContact(payload.contact) ||
       isDisposableEmail(payload.contact) ||
       !hasEnoughLetters(payload.name, 2) ||
+      payload.company.length < MIN_COMPANY_LENGTH ||
+      payload.company.length > COMPANY_MAX_LENGTH ||
+      !hasEnoughLetters(payload.company, 2) ||
+      hasLongRepeatingFragment(payload.company) ||
       !hasEnoughLetters(payload.task, 8) ||
       hasLongRepeatingFragment(payload.name) ||
       hasLongRepeatingFragment(payload.task) ||
-      hasTooManyLinks(payload.task) ||
-      (payload.variant === "request" &&
-        (payload.company.length < MIN_COMPANY_LENGTH ||
-          payload.company.length > COMPANY_MAX_LENGTH ||
-          !hasEnoughLetters(payload.company, 2) ||
-          hasLongRepeatingFragment(payload.company)))
+      hasTooManyLinks(payload.task)
     ) {
       return NextResponse.json({ error: "Заполните поля формы корректно." }, { status: 400 });
     }
@@ -252,10 +252,7 @@ export async function POST(request: Request) {
     await transport.verify();
 
     const subjectPrefix = payload.variant === "request" ? "Новая заявка" : "Новое сообщение";
-    const companyLine =
-      payload.variant === "request"
-        ? `<p><strong>Компания:</strong> ${escapeHtml(payload.company || "Не указана")}</p>`
-        : "";
+    const companyLine = `<p><strong>Компания:</strong> ${escapeHtml(payload.company)}</p>`;
     await transport.sendMail({
       from: smtpFrom,
       to: recipient,
@@ -264,7 +261,7 @@ export async function POST(request: Request) {
       text: [
         `${subjectPrefix} с сайта Decode Research`,
         `Имя: ${payload.name}`,
-        payload.variant === "request" ? `Компания: ${payload.company || "Не указана"}` : "",
+        `Компания: ${payload.company}`,
         `Контакт: ${payload.contact}`,
         "",
         "Задача:",
