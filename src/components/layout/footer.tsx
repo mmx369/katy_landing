@@ -7,6 +7,10 @@ import { navigationItems } from "@/data/navigation";
 
 export function Footer() {
   const phoneHref = `tel:${contactInfo.phone.replace(/\D/g, "")}`;
+  const websiteHref = contactInfo.website.startsWith("http")
+    ? contactInfo.website
+    : `https://${contactInfo.website}`;
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="mt-auto border-t border-[var(--color-border)] py-12">
@@ -55,7 +59,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href={`https://${contactInfo.website}`}
+                  href={websiteHref}
                   className="hover:text-[var(--color-midnight)]"
                 >
                   {contactInfo.website}
@@ -68,6 +72,9 @@ export function Footer() {
               </li>
             </ul>
           </div>
+        </div>
+        <div className="mt-8 border-t border-[var(--color-border)] pt-4 text-center text-xs text-[var(--color-muted)]">
+          <p>{`© ${currentYear} Decode Research. Все права защищены.`}</p>
         </div>
       </SectionContainer>
     </footer>

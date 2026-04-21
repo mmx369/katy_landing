@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || null;
+const DEFAULT_SITE_URL = "https://decode-research.ru";
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_SITE_URL;
 const metadataBase = siteUrl ? new URL(siteUrl) : undefined;
 
 interface PageMetadataProps {

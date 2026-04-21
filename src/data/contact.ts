@@ -1,7 +1,7 @@
 export const contactInfo = {
   email: "e.savastenko@mail.ru",
   phone: "+7 (965) 296-32-49",
-  website: "decode.agency",
+  website: "decode-research.ru",
   responseTime: "Обычно отвечаем в течение одного рабочего дня.",
 };
 
