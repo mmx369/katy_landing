@@ -40,7 +40,7 @@ export function Header() {
           <div className="hidden lg:block">
             <Button
               href="/request"
-              className="px-5 py-2.5 text-sm shadow-[0_8px_20px_rgba(108,92,231,0.25)]"
+              className="px-5 py-2.5 text-sm"
             >
               Оставить заявку
             </Button>

@@ -22,10 +22,8 @@ interface NativeButtonProps extends BaseButtonProps {
 type ButtonProps = LinkButtonProps | NativeButtonProps;
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary:
-    "border border-transparent bg-[linear-gradient(135deg,#4F46E5,#7C3AED)] text-white shadow-[0_10px_30px_rgba(99,102,241,0.4),inset_0_1px_0_rgba(255,255,255,0.35)] enabled:hover:shadow-[0_14px_42px_rgba(99,102,241,0.48),inset_0_1px_0_rgba(255,255,255,0.42)] enabled:hover:brightness-110 enabled:hover:-translate-y-0.5",
-  secondary:
-    "bg-white/80 text-[var(--color-midnight)] border border-[var(--color-border-strong)] enabled:hover:bg-white",
+  primary: "premium-cta-button",
+  secondary: "premium-secondary-button",
   ghost:
     "bg-transparent text-[var(--color-midnight)] border border-transparent enabled:hover:bg-white/70",
 };
