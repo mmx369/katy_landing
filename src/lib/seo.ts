@@ -30,10 +30,10 @@ export function buildMetadata({
       ? {
           images: [
             {
-              url: `${siteUrl}/hero-eye-reference-full.png`,
-              width: 985,
-              height: 389,
-              alt: "Decode Research - маркетинговые исследования и стратегия",
+              url: `${siteUrl}/og-decode.png`,
+              width: 1200,
+              height: 630,
+              alt: "Decode Research",
             },
           ],
         }
@@ -44,7 +44,7 @@ export function buildMetadata({
     card: (siteUrl ? "summary_large_image" : "summary") as "summary_large_image" | "summary",
     title,
     description,
-    ...(siteUrl ? { images: [`${siteUrl}/hero-eye-reference-full.png`] } : {}),
+    ...(siteUrl ? { images: [`${siteUrl}/og-decode.png`] } : {}),
   };
 
   return {

@@ -59,7 +59,7 @@ export function TeamContactsSection() {
 
             <article className="glass-card-l2 flex min-h-[420px] flex-col items-center justify-center rounded-3xl p-6 text-center">
               <div className="mb-4 p-1">
-                <SiteLogo withSignature linked={false} variant="full" />
+                <SiteLogo linked={false} variant="full" />
               </div>
               <h3 className="text-xl font-semibold text-[var(--color-midnight)]">
                 Decode Research

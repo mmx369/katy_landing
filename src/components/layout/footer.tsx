@@ -17,7 +17,7 @@ export function Footer() {
       <SectionContainer>
         <div className="grid gap-8 text-center md:grid-cols-[1.2fr_1fr_1fr] md:text-left">
           <div>
-            <SiteLogo withSignature variant="full" />
+            <SiteLogo variant="full" />
             <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[var(--color-muted-strong)] md:mx-0">
               Исследовательское агентство для компаний, которым нужны глубокие
               инсайты и решения, применимые в бизнесе.

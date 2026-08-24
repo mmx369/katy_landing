@@ -21,7 +21,7 @@ export function Header() {
       <SectionContainer className="py-1.5">
         <div className="flex min-h-[60px] items-center justify-between gap-4">
           <div onClick={closeMenu}>
-            <SiteLogo size="xs" variant="mark" addEcodeText />
+            <SiteLogo size="xs" variant="full" />
           </div>
           <nav
             className="hidden items-center gap-8 text-sm font-medium text-[var(--color-midnight-soft)] lg:flex"
