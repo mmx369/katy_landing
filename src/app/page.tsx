@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { AdvantagesSection } from "@/components/sections/advantages-section";
 import { AboutSlideSection } from "@/components/sections/about-slide-section";
 import { BusinessGrowthSection } from "@/components/sections/business-growth-section";
@@ -9,6 +11,14 @@ import { ServicesMethodsSection } from "@/components/sections/services-methods-s
 import { TeamContactsSection } from "@/components/sections/team-contacts-section";
 import { WorkflowSection } from "@/components/sections/workflow-section";
 import { homeCta } from "@/data/home";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Decode Research - маркетинговое исследовательское агентство",
+  description:
+    "Маркетинговое исследовательское агентство Decode Research: сегментации, тестирование коммуникаций, CX-исследования, CustDev и аудит карточек для маркетплейсов.",
+  path: "/",
+});
 
 export default function HomePage() {
   return (

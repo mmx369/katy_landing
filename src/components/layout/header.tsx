@@ -20,9 +20,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-[rgba(255,255,255,0.6)] bg-[rgba(255,255,255,0.65)] shadow-[0_10px_30px_rgba(30,40,80,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-[18px]">
       <SectionContainer className="py-1.5">
         <div className="flex min-h-[60px] items-center justify-between gap-4">
-          <div onClick={closeMenu}>
-            <SiteLogo size="xs" variant="full" />
-          </div>
+          <SiteLogo size="xs" variant="full" priority onNavigate={closeMenu} />
           <nav
             className="hidden items-center gap-8 text-sm font-medium text-[var(--color-midnight-soft)] lg:flex"
             aria-label="Основная навигация"

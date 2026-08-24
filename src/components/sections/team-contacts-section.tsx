@@ -21,7 +21,7 @@ export function TeamContactsSection() {
 
           <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {teamMembers.map((member) => (
-              <article key={member.name} className="surface-panel glass-card-l2 card-interactive rounded-3xl p-6">
+              <article key={member.name} className="surface-panel glass-card-l2 rounded-3xl p-6">
                 <div className="group relative mb-5 aspect-square w-full overflow-hidden rounded-[24px] bg-[linear-gradient(145deg,rgba(244,245,248,0.94),rgba(228,231,236,0.9))] [box-shadow:inset_0_2px_5px_rgba(255,255,255,0.5),inset_0_-7px_14px_rgba(110,116,128,0.25),inset_7px_0_12px_rgba(255,255,255,0.16),inset_-7px_0_12px_rgba(114,121,135,0.18),0_16px_28px_rgba(36,44,62,0.16)]">
                   <div className="absolute inset-[10px] overflow-hidden rounded-[16px] bg-[linear-gradient(180deg,rgba(255,255,255,0.3),rgba(255,255,255,0.1))]">
                     <Image

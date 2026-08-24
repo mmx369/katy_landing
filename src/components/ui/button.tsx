@@ -25,11 +25,11 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary: "premium-cta-button",
   secondary: "premium-secondary-button",
   ghost:
-    "bg-transparent text-[var(--color-midnight)] border border-transparent enabled:hover:bg-white/70",
+    "bg-transparent text-[var(--color-midnight)] border border-transparent enabled:hover:bg-white/70 focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)]",
 };
 
 const baseClassName =
-  "inline-flex cursor-pointer items-center justify-center rounded-full px-6 py-3 text-sm font-semibold tracking-tight transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)] disabled:cursor-not-allowed disabled:opacity-70";
+  "inline-flex cursor-pointer items-center justify-center rounded-full px-6 py-3 text-sm font-semibold tracking-tight transition-all duration-300 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-70";
 
 export function Button(props: ButtonProps) {
   const variant = props.variant ?? "primary";

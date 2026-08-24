@@ -1,12 +1,7 @@
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionIntro } from "@/components/sections/section-intro";
 import { SectionContainer } from "@/components/ui/section-container";
-
-const aboutPoints = [
-  "Работаем на стыке маркетинга, продукта и пользовательского опыта.",
-  "Говорим с бизнесом на одном языке и связываем выводы с управленческими решениями.",
-  "Не просто анализируем поведение, а трансформируем исследование в действия.",
-];
+import { aboutPoints } from "@/data/home";
 
 export function AboutSlideSection() {
   return (

@@ -9,12 +9,12 @@ import { consentVersion } from "@/data/legal";
 import {
   COMPANY_MAX_LENGTH,
   CONTACT_MAX_LENGTH,
-  MIN_NAME_LENGTH,
-  MIN_TASK_LENGTH,
   NAME_MAX_LENGTH,
   TASK_MAX_LENGTH,
   isValidCompany,
   isValidContact,
+  isValidName,
+  isValidTask,
 } from "@/lib/contact-validation";
 
 interface ContactFormProps {
@@ -52,10 +52,10 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
 
   const errors = useMemo(() => {
     return {
-      name: form.name.trim().length < MIN_NAME_LENGTH,
+      name: !isValidName(form.name),
       company: !isValidCompany(form.company),
-      task: form.task.trim().length < MIN_TASK_LENGTH || form.task.trim().length > TASK_MAX_LENGTH,
-      contact: form.contact.trim().length > CONTACT_MAX_LENGTH || !isValidContact(form.contact),
+      task: !isValidTask(form.task),
+      contact: !isValidContact(form.contact),
     };
   }, [form]);
 
@@ -300,7 +300,7 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <Button
           type="submit"
-          disabled={isSubmitting || hasErrors}
+          disabled={isSubmitting}
           className="w-full text-center sm:w-auto"
         >
           {isSubmitting ? "Отправляем..." : "Отправить заявку"}
@@ -308,16 +308,20 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
         <p className="text-xs text-[var(--color-muted)]">Обычно отвечаем в течение дня.</p>
       </div>
 
-      {sent ? (
-        <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-          Спасибо. Заявка отправлена, мы свяжемся с вами в ближайшее время.
-        </p>
-      ) : null}
-      {submitError ? (
-        <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {submitError}
-        </p>
-      ) : null}
+      <div role="status" aria-live="polite">
+        {sent ? (
+          <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+            Спасибо. Заявка отправлена, мы свяжемся с вами в ближайшее время.
+          </p>
+        ) : null}
+      </div>
+      <div role="alert" aria-live="assertive">
+        {submitError ? (
+          <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            {submitError}
+          </p>
+        ) : null}
+      </div>
     </form>
   );
 }

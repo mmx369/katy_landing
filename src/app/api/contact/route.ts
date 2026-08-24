@@ -3,14 +3,11 @@ import { createHash } from "node:crypto";
 import nodemailer from "nodemailer";
 import { consentVersion } from "@/data/legal";
 import {
-  CONTACT_MAX_LENGTH,
-  MIN_NAME_LENGTH,
-  MIN_TASK_LENGTH,
-  NAME_MAX_LENGTH,
-  TASK_MAX_LENGTH,
   isValidCompany,
   isValidContact,
   isValidEmail,
+  isValidName,
+  isValidTask,
   normalizeValue,
 } from "@/lib/contact-validation";
 
@@ -83,20 +80,6 @@ function isDisposableEmail(value: string) {
   }
 
   return DISPOSABLE_EMAIL_DOMAINS.has(getEmailDomain(value));
-}
-
-function hasEnoughLetters(value: string, minLetters: number) {
-  const letters = value.match(/[A-Za-zА-Яа-яЁё]/g);
-  return (letters?.length ?? 0) >= minLetters;
-}
-
-function hasTooManyLinks(value: string) {
-  const links = value.match(/https?:\/\/|www\./gi);
-  return (links?.length ?? 0) > 1;
-}
-
-function hasLongRepeatingFragment(value: string) {
-  return /(.)\1{7,}/.test(value);
 }
 
 // The nginx in front of this app overwrites X-Real-IP with the socket address, so it is the only
@@ -206,6 +189,40 @@ function cleanupMemoryStores() {
   }
 }
 
+// Built once per process: a fresh transport on every submission adds a needless SMTP handshake.
+let mailer: { transport: ReturnType<typeof nodemailer.createTransport>; from: string; to: string } | null = null;
+
+function getMailer() {
+  if (mailer) {
+    return mailer;
+  }
+
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT ?? 587);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const from = process.env.SMTP_FROM ?? user;
+  const to = process.env.CONTACT_RECEIVER_EMAIL ?? from;
+
+  if (!host || !Number.isFinite(port) || !user || !pass || !from || !to) {
+    return null;
+  }
+
+  mailer = {
+    transport: nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      requireTLS: true,
+      auth: { user, pass },
+    }),
+    from,
+    to,
+  };
+
+  return mailer;
+}
+
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -265,23 +282,19 @@ export async function POST(request: Request) {
     }
 
     if (
-      payload.name.length < MIN_NAME_LENGTH ||
-      payload.name.length > NAME_MAX_LENGTH ||
-      payload.task.length < MIN_TASK_LENGTH ||
-      payload.task.length > TASK_MAX_LENGTH ||
-      payload.contact.length > CONTACT_MAX_LENGTH ||
-      !isValidContact(payload.contact) ||
-      isDisposableEmail(payload.contact) ||
-      !hasEnoughLetters(payload.name, 2) ||
+      !isValidName(payload.name) ||
       !isValidCompany(payload.company) ||
-      (payload.company.length > 0 && !hasEnoughLetters(payload.company, 2)) ||
-      (payload.company.length > 0 && hasLongRepeatingFragment(payload.company)) ||
-      !hasEnoughLetters(payload.task, 8) ||
-      hasLongRepeatingFragment(payload.name) ||
-      hasLongRepeatingFragment(payload.task) ||
-      hasTooManyLinks(payload.task)
+      !isValidTask(payload.task) ||
+      !isValidContact(payload.contact)
     ) {
       return NextResponse.json({ error: "Заполните поля формы корректно." }, { status: 400 });
+    }
+
+    if (isDisposableEmail(payload.contact)) {
+      return NextResponse.json(
+        { error: "Укажите рабочий адрес электронной почты или телефон." },
+        { status: 400 }
+      );
     }
 
     const fingerprint = buildSubmissionFingerprint(clientIp, payload.contact, payload.task);
@@ -292,31 +305,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpPort = Number(process.env.SMTP_PORT ?? 587);
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-    const smtpFrom = process.env.SMTP_FROM ?? smtpUser;
-    const recipient = process.env.CONTACT_RECEIVER_EMAIL ?? smtpFrom;
-
-    if (!smtpHost || !smtpPort || !smtpUser || !smtpPass || !smtpFrom || !recipient) {
+    const mailer = getMailer();
+    if (!mailer) {
+      console.error("[contact] SMTP не настроен: проверьте переменные окружения");
       return NextResponse.json(
-        { error: "Почтовый сервер не настроен. Проверьте SMTP переменные окружения." },
+        { error: "Не удалось отправить сообщение. Попробуйте еще раз." },
         { status: 500 }
       );
     }
-
-    const transport = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpPort === 465,
-      requireTLS: true,
-      auth: {
-        user: smtpUser,
-        pass: smtpPass,
-      },
-    });
-    await transport.verify();
 
     const replyToAddress = isValidEmail(payload.contact) ? payload.contact : undefined;
     const subjectPrefix = payload.variant === "request" ? "Новая заявка" : "Новое сообщение";
@@ -328,9 +324,9 @@ export async function POST(request: Request) {
     const companyLine = payload.company
       ? `<p><strong>Компания:</strong> ${escapeHtml(payload.company)}</p>`
       : "";
-    await transport.sendMail({
-      from: smtpFrom,
-      to: recipient,
+    await mailer.transport.sendMail({
+      from: mailer.from,
+      to: mailer.to,
       ...(replyToAddress ? { replyTo: replyToAddress } : {}),
       subject: `${subjectPrefix} с сайта Decode Research`,
       text: [

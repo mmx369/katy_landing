@@ -22,6 +22,29 @@ export const isValidPhone = (value: string) => {
   return digits.length >= PHONE_DIGIT_MIN && digits.length <= PHONE_DIGIT_MAX;
 };
 
+const hasEnoughLetters = (value: string, minLetters: number) => {
+  const letters = value.match(/[A-Za-zА-Яа-яЁё]/g);
+  return (letters?.length ?? 0) >= minLetters;
+};
+
+/** Eight identical characters in a row is keyboard mashing, not an answer. */
+const hasLongRepeatingFragment = (value: string) => /(.)\1{7,}/.test(value);
+
+const hasTooManyLinks = (value: string) => {
+  const links = value.match(/https?:\/\/|www\./gi);
+  return (links?.length ?? 0) > 1;
+};
+
+export const isValidName = (value: string) => {
+  const normalized = normalizeValue(value);
+  return (
+    normalized.length >= MIN_NAME_LENGTH &&
+    normalized.length <= NAME_MAX_LENGTH &&
+    hasEnoughLetters(normalized, 2) &&
+    !hasLongRepeatingFragment(normalized)
+  );
+};
+
 /** Company is optional: an empty value passes, a filled one still has to look like a name. */
 export const isValidCompany = (value: string) => {
   const normalized = normalizeValue(value);
@@ -29,10 +52,29 @@ export const isValidCompany = (value: string) => {
     return true;
   }
 
-  return normalized.length >= MIN_COMPANY_LENGTH && normalized.length <= COMPANY_MAX_LENGTH;
+  return (
+    normalized.length >= MIN_COMPANY_LENGTH &&
+    normalized.length <= COMPANY_MAX_LENGTH &&
+    hasEnoughLetters(normalized, 2) &&
+    !hasLongRepeatingFragment(normalized)
+  );
+};
+
+export const isValidTask = (value: string) => {
+  const trimmed = value.trim();
+  return (
+    trimmed.length >= MIN_TASK_LENGTH &&
+    trimmed.length <= TASK_MAX_LENGTH &&
+    hasEnoughLetters(trimmed, 8) &&
+    !hasLongRepeatingFragment(trimmed) &&
+    !hasTooManyLinks(trimmed)
+  );
 };
 
 export const isValidContact = (value: string) => {
   const normalized = normalizeValue(value);
-  return isValidEmail(normalized) || isValidPhone(normalized);
+  return (
+    normalized.length <= CONTACT_MAX_LENGTH &&
+    (isValidEmail(normalized) || isValidPhone(normalized))
+  );
 };

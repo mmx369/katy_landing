@@ -11,7 +11,6 @@ export default function robots(): MetadataRoute.Robots {
     ...(siteUrl
       ? {
           sitemap: `${siteUrl}/sitemap.xml`,
-          host: siteUrl,
         }
       : {}),
   };

@@ -3,6 +3,8 @@ import Link from "next/link";
 
 interface SiteLogoProps {
   linked?: boolean;
+  priority?: boolean;
+  onNavigate?: () => void;
   className?: string;
   size?: "xs" | "sm" | "md";
   variant?: "mark" | "full";
@@ -28,6 +30,8 @@ const srcMap = {
 
 export function SiteLogo({
   linked = true,
+  priority = false,
+  onNavigate,
   className,
   size = "md",
   variant = "full",
@@ -42,7 +46,7 @@ export function SiteLogo({
       height={height}
       className={`inline-block h-auto max-w-none ${className ?? ""}`}
       style={{ width: `${width}px` }}
-      priority
+      priority={priority}
     />
   );
 
@@ -51,7 +55,7 @@ export function SiteLogo({
   }
 
   return (
-    <Link href="/" aria-label="Decode - на главную">
+    <Link href="/" aria-label="Decode - на главную" onClick={onNavigate}>
       {content}
     </Link>
   );
