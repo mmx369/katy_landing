@@ -10,6 +10,7 @@ const routes = [
   "/contacts",
   "/request",
   "/privacy",
+  "/personal-data-consent",
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {

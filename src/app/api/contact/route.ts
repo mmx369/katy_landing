@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import nodemailer from "nodemailer";
+import { consentVersion } from "@/data/legal";
 import {
-  COMPANY_MAX_LENGTH,
   CONTACT_MAX_LENGTH,
-  MIN_COMPANY_LENGTH,
   MIN_NAME_LENGTH,
   MIN_TASK_LENGTH,
   NAME_MAX_LENGTH,
   TASK_MAX_LENGTH,
+  isValidCompany,
   isValidContact,
   isValidEmail,
   normalizeValue,
@@ -21,6 +21,8 @@ interface ContactPayload {
   contact: string;
   variant: "request" | "contact";
   companyWebsite?: string;
+  consent: boolean;
+  consentVersion: string;
 }
 
 const RATE_WINDOW_MS = 10 * 60 * 1000;
@@ -59,6 +61,8 @@ function isValidPayload(payload: unknown): payload is ContactPayload {
     typeof candidate.company === "string" &&
     typeof candidate.task === "string" &&
     typeof candidate.contact === "string" &&
+    typeof candidate.consent === "boolean" &&
+    typeof candidate.consentVersion === "string" &&
     (candidate.companyWebsite === undefined || typeof candidate.companyWebsite === "string")
   );
 }
@@ -246,6 +250,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
+    if (!payload.consent) {
+      return NextResponse.json(
+        { error: "Отметьте согласие на обработку персональных данных." },
+        { status: 400 }
+      );
+    }
+
+    if (payload.consentVersion !== consentVersion) {
+      return NextResponse.json(
+        { error: "Текст согласия обновился. Обновите страницу и отправьте заявку еще раз." },
+        { status: 409 }
+      );
+    }
+
     if (
       payload.name.length < MIN_NAME_LENGTH ||
       payload.name.length > NAME_MAX_LENGTH ||
@@ -255,10 +273,9 @@ export async function POST(request: Request) {
       !isValidContact(payload.contact) ||
       isDisposableEmail(payload.contact) ||
       !hasEnoughLetters(payload.name, 2) ||
-      payload.company.length < MIN_COMPANY_LENGTH ||
-      payload.company.length > COMPANY_MAX_LENGTH ||
-      !hasEnoughLetters(payload.company, 2) ||
-      hasLongRepeatingFragment(payload.company) ||
+      !isValidCompany(payload.company) ||
+      (payload.company.length > 0 && !hasEnoughLetters(payload.company, 2)) ||
+      (payload.company.length > 0 && hasLongRepeatingFragment(payload.company)) ||
       !hasEnoughLetters(payload.task, 8) ||
       hasLongRepeatingFragment(payload.name) ||
       hasLongRepeatingFragment(payload.task) ||
@@ -303,7 +320,14 @@ export async function POST(request: Request) {
 
     const replyToAddress = isValidEmail(payload.contact) ? payload.contact : undefined;
     const subjectPrefix = payload.variant === "request" ? "Новая заявка" : "Новое сообщение";
-    const companyLine = `<p><strong>Компания:</strong> ${escapeHtml(payload.company)}</p>`;
+    const consentedAt = new Intl.DateTimeFormat("ru-RU", {
+      timeZone: "Europe/Moscow",
+      dateStyle: "long",
+      timeStyle: "medium",
+    }).format(new Date());
+    const companyLine = payload.company
+      ? `<p><strong>Компания:</strong> ${escapeHtml(payload.company)}</p>`
+      : "";
     await transport.sendMail({
       from: smtpFrom,
       to: recipient,
@@ -312,8 +336,12 @@ export async function POST(request: Request) {
       text: [
         `${subjectPrefix} с сайта Decode Research`,
         `Имя: ${payload.name}`,
-        `Компания: ${payload.company}`,
+        payload.company ? `Компания: ${payload.company}` : "",
         `Контакт: ${payload.contact}`,
+        "",
+        "Согласие на обработку персональных данных: Да",
+        `Дата и время согласия: ${consentedAt} (МСК)`,
+        `Версия согласия: ${consentVersion}`,
         "",
         "Задача:",
         payload.task,
@@ -326,6 +354,9 @@ export async function POST(request: Request) {
         ${companyLine}
         <p><strong>Контакт:</strong> ${escapeHtml(payload.contact)}</p>
         <p><strong>Тип формы:</strong> ${payload.variant === "request" ? "Оставить заявку" : "Контакты"}</p>
+        <p><strong>Согласие на обработку персональных данных:</strong> Да</p>
+        <p><strong>Дата и время согласия:</strong> ${escapeHtml(consentedAt)} (МСК)</p>
+        <p><strong>Версия согласия:</strong> ${escapeHtml(consentVersion)}</p>
         <p><strong>Задача:</strong></p>
         <p>${escapeHtml(payload.task).replaceAll("\n", "<br />")}</p>
       `,

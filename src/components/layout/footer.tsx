@@ -67,7 +67,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/privacy" className="hover:text-[var(--color-midnight)]">
-                  Политика конфиденциальности
+                  Политика обработки персональных данных
                 </Link>
               </li>
             </ul>

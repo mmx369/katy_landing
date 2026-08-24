@@ -65,3 +65,10 @@ export interface KnowledgeArticle {
   readingTime: string;
   date: string;
 }
+
+export interface LegalSection {
+  title?: string;
+  paragraphs?: string[];
+  list?: string[];
+  afterList?: string[];
+}

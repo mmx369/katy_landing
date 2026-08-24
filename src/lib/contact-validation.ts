@@ -22,6 +22,16 @@ export const isValidPhone = (value: string) => {
   return digits.length >= PHONE_DIGIT_MIN && digits.length <= PHONE_DIGIT_MAX;
 };
 
+/** Company is optional: an empty value passes, a filled one still has to look like a name. */
+export const isValidCompany = (value: string) => {
+  const normalized = normalizeValue(value);
+  if (normalized.length === 0) {
+    return true;
+  }
+
+  return normalized.length >= MIN_COMPANY_LENGTH && normalized.length <= COMPANY_MAX_LENGTH;
+};
+
 export const isValidContact = (value: string) => {
   const normalized = normalizeValue(value);
   return isValidEmail(normalized) || isValidPhone(normalized);
