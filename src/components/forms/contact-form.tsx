@@ -35,6 +35,22 @@ const initialState: FormState = {
   contact: "",
 };
 
+// A proxy in front of the app answers with HTML on 502/504, so the body is not always JSON.
+async function readErrorMessage(response: Response) {
+  try {
+    const body: unknown = await response.json();
+    if (body && typeof body === "object" && "error" in body && typeof body.error === "string") {
+      return body.error;
+    }
+  } catch {
+    // Fall through to the status-based message below.
+  }
+
+  return response.status >= 500
+    ? "Сервер сейчас недоступен. Напишите нам на ask@decode-research.ru."
+    : "Не удалось отправить заявку. Попробуйте позже.";
+}
+
 export function ContactForm({ variant = "request" }: ContactFormProps) {
   const [form, setForm] = useState<FormState>(initialState);
   const [companyWebsite, setCompanyWebsite] = useState("");
@@ -91,6 +107,7 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
       setIsSubmitting(true);
       const response = await fetch("/api/contact", {
         method: "POST",
+        signal: AbortSignal.timeout(30_000),
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
@@ -102,8 +119,7 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
       });
 
       if (!response.ok) {
-        const responseBody = (await response.json()) as { error?: string };
-        setSubmitError(responseBody.error ?? "Не удалось отправить заявку. Попробуйте позже.");
+        setSubmitError(await readErrorMessage(response));
         return;
       }
 
@@ -117,8 +133,12 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
         task: false,
         contact: false,
       });
-    } catch {
-      setSubmitError("Ошибка сети. Проверьте интернет и попробуйте еще раз.");
+    } catch (error) {
+      setSubmitError(
+        error instanceof DOMException && error.name === "TimeoutError"
+          ? "Сервер не ответил вовремя. Напишите нам на ask@decode-research.ru."
+          : "Ошибка сети. Проверьте интернет и попробуйте еще раз."
+      );
     } finally {
       setIsSubmitting(false);
     }

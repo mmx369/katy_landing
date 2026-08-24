@@ -215,6 +215,10 @@ function getMailer() {
       secure: port === 465,
       requireTLS: true,
       auth: { user, pass },
+      // Nodemailer waits two minutes by default; a blocked outbound port would hang the request.
+      connectionTimeout: 10_000,
+      greetingTimeout: 10_000,
+      socketTimeout: 20_000,
     }),
     from,
     to,
