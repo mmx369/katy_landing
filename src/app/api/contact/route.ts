@@ -95,13 +95,58 @@ function hasLongRepeatingFragment(value: string) {
   return /(.)\1{7,}/.test(value);
 }
 
+// The nginx in front of this app overwrites X-Real-IP with the socket address, so it is the only
+// header a client cannot forge. X-Forwarded-For is appended to, which makes its last entry trusted.
 function extractClientIp(request: Request) {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) {
-    return forwardedFor.split(",")[0]?.trim() || "unknown";
+  const realIp = request.headers.get("x-real-ip")?.trim();
+  if (realIp) {
+    return realIp;
   }
 
-  return request.headers.get("x-real-ip") ?? "unknown";
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    const entries = forwardedFor.split(",");
+    return entries[entries.length - 1]?.trim() || "unknown";
+  }
+
+  return "unknown";
+}
+
+function isCrossSiteRequest(request: Request) {
+  const fetchSite = request.headers.get("sec-fetch-site");
+  if (fetchSite && fetchSite !== "same-origin") {
+    return true;
+  }
+
+  const origin = request.headers.get("origin");
+  if (!origin) {
+    return false;
+  }
+
+  try {
+    return new URL(origin).host !== request.headers.get("host");
+  } catch {
+    return true;
+  }
+}
+
+function readErrorField(error: unknown, key: "code" | "responseCode" | "command") {
+  if (typeof error !== "object" || error === null || !(key in error)) {
+    return undefined;
+  }
+
+  const value = Reflect.get(error, key);
+  return typeof value === "string" || typeof value === "number" ? value : undefined;
+}
+
+// Structured fields only: SMTP error messages can echo the submitted address back.
+function logDeliveryFailure(error: unknown) {
+  console.error("[contact] Заявка не отправлена", {
+    name: error instanceof Error ? error.name : "UnknownError",
+    code: readErrorField(error, "code"),
+    responseCode: readErrorField(error, "responseCode"),
+    command: readErrorField(error, "command"),
+  });
 }
 
 function checkRateLimit(ip: string) {
@@ -169,6 +214,10 @@ function escapeHtml(value: string) {
 export async function POST(request: Request) {
   try {
     cleanupMemoryStores();
+
+    if (isCrossSiteRequest(request)) {
+      return NextResponse.json({ error: "Некорректный источник запроса." }, { status: 403 });
+    }
 
     const body: unknown = await request.json();
 
@@ -244,6 +293,7 @@ export async function POST(request: Request) {
       host: smtpHost,
       port: smtpPort,
       secure: smtpPort === 465,
+      requireTLS: true,
       auth: {
         user: smtpUser,
         pass: smtpPass,
@@ -251,12 +301,13 @@ export async function POST(request: Request) {
     });
     await transport.verify();
 
+    const replyToAddress = isValidEmail(payload.contact) ? payload.contact : undefined;
     const subjectPrefix = payload.variant === "request" ? "Новая заявка" : "Новое сообщение";
     const companyLine = `<p><strong>Компания:</strong> ${escapeHtml(payload.company)}</p>`;
     await transport.sendMail({
       from: smtpFrom,
       to: recipient,
-      replyTo: payload.contact,
+      ...(replyToAddress ? { replyTo: replyToAddress } : {}),
       subject: `${subjectPrefix} с сайта Decode Research`,
       text: [
         `${subjectPrefix} с сайта Decode Research`,
@@ -281,7 +332,9 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (error) {
+    logDeliveryFailure(error);
+
     return NextResponse.json(
       { error: "Не удалось отправить сообщение. Попробуйте еще раз." },
       { status: 500 }

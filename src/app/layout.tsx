@@ -51,7 +51,7 @@ export default function RootLayout({
       <body className="min-h-full bg-[var(--color-surface)] text-[var(--color-midnight)]">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replaceAll("<", "\\u003c") }}
         />
         <div className="relative min-h-screen overflow-x-clip">
           <Header />
