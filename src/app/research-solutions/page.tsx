@@ -34,15 +34,12 @@ export default function ResearchSolutionsPage() {
                 Направления
               </p>
               <ul className="mt-4 flex flex-wrap gap-2">
-                {solutionSections.map((section, index) => (
+                {solutionSections.map((section) => (
                   <li key={section.id}>
                     <a
                       href={`#${section.id}`}
-                      className="chip-pill flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
+                      className="chip-pill flex items-center rounded-full px-3.5 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
                     >
-                      <span className="text-xs tabular-nums opacity-70">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
                       {section.title}
                     </a>
                   </li>

@@ -34,8 +34,8 @@ export function SolutionSectionCard({ section, index }: SolutionSectionCardProps
       </header>
 
       <div className="mt-7 grid gap-4 lg:grid-cols-2">
-        {section.methods.map((method, methodIndex) => (
-          <ResearchMethodCard key={method.id} method={method} index={methodIndex} />
+        {section.methods.map((method) => (
+          <ResearchMethodCard key={method.id} method={method} />
         ))}
       </div>
     </section>

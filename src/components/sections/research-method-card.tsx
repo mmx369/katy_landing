@@ -7,7 +7,6 @@ import type { MethodList, ResearchMethod } from "@/data/solutions";
 
 interface ResearchMethodCardProps {
   method: ResearchMethod;
-  index: number;
 }
 
 function MethodListBlock({ list, label }: { list: MethodList; label?: string }) {
@@ -33,25 +32,20 @@ function MethodListBlock({ list, label }: { list: MethodList; label?: string }) 
   );
 }
 
-export function ResearchMethodCard({ method, index }: ResearchMethodCardProps) {
+export function ResearchMethodCard({ method }: ResearchMethodCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const panelId = useId();
   const [lead, ...restParagraphs] = method.paragraphs;
 
   return (
     <article className="glass-card-l2 flex h-full flex-col rounded-2xl border-[rgba(108,92,231,0.16)] p-5 sm:p-6">
-      <div className="flex items-start gap-3">
-        <span className="chip-pill shrink-0 rounded-xl px-2.5 py-1 text-xs font-semibold tabular-nums">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        <div>
-          <h3 className="text-lg font-semibold leading-snug text-[var(--color-midnight)] sm:text-xl">
-            {method.title}
-          </h3>
-          {method.subtitle ? (
-            <p className="mt-1 text-sm text-[var(--color-accent-plum)]">{method.subtitle}</p>
-          ) : null}
-        </div>
+      <div>
+        <h3 className="text-lg font-semibold leading-snug text-[var(--color-midnight)] sm:text-xl">
+          {method.title}
+        </h3>
+        {method.subtitle ? (
+          <p className="mt-1 text-sm text-[var(--color-accent-plum)]">{method.subtitle}</p>
+        ) : null}
       </div>
 
       <p
