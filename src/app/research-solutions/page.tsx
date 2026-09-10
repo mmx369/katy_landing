@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { FadeIn } from "@/components/motion/fade-in";
 import { PageHero } from "@/components/sections/page-hero";
-import { SectionIntro } from "@/components/sections/section-intro";
 import { SolutionSectionCard } from "@/components/sections/solution-section-card";
 import { SectionContainer } from "@/components/ui/section-container";
 import { solutionSections } from "@/data/solutions";
@@ -11,7 +10,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Исследовательские решения - Decode Research",
   description:
-    "Маркетинговые исследования для роста бизнеса: сегментации, исследования бренда и коммуникаций, CX и клиентский опыт с практическими рекомендациями.",
+    "Направления и методы маркетинговых исследований: сегментация, CustDev, JTBD, BHT, тестирование креатива, метод Кано, PSM, TURF-анализ, NPS, CJM, UI-исследования - что дает каждый метод и когда его стоит применять.",
   path: "/research-solutions",
 });
 
@@ -21,23 +20,44 @@ export default function ResearchSolutionsPage() {
       <PageHero
         eyebrow="Исследовательские решения"
         title="Исследовательские решения для роста бизнеса"
-        description="Три направления работы: сегментации, бренд и продвижение, взаимодействие с клиентом. Для каждого - задачи, методы и практический результат."
+        description="Пять направлений: понять рынок, построить сильный бренд, создать востребованный продукт, улучшить клиентский опыт и обосновать решения. Для каждого метода - как он работает и когда его стоит применять."
       />
 
-      <section className="py-10 sm:py-14">
+      <section className="pb-12 sm:pb-20">
         <SectionContainer>
           <FadeIn>
-            <SectionIntro
-              title="Три ключевых направления исследовательских решений"
-              align="mobile-center"
-            />
-
-            <div className="mt-8 space-y-4">
-              {solutionSections.map((section) => (
-                <SolutionSectionCard key={section.id} section={section} />
-              ))}
-            </div>
+            <nav
+              aria-label="Направления исследований"
+              className="surface-panel rounded-3xl p-5 sm:p-6"
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                Направления
+              </p>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {solutionSections.map((section, index) => (
+                  <li key={section.id}>
+                    <a
+                      href={`#${section.id}`}
+                      className="chip-pill flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
+                    >
+                      <span className="text-xs tabular-nums opacity-70">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      {section.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </FadeIn>
+
+          <div className="mt-4 space-y-4">
+            {solutionSections.map((section, index) => (
+              <FadeIn key={section.id}>
+                <SolutionSectionCard section={section} index={index} />
+              </FadeIn>
+            ))}
+          </div>
         </SectionContainer>
       </section>
     </>

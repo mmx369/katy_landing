@@ -1,30 +1,18 @@
-import { BarChart3, Target, Users2 } from "lucide-react";
+import { ArrowRight, Compass, HeartHandshake, type LucideIcon, Package, Ruler, Target } from "lucide-react";
+import Link from "next/link";
 
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionIntro } from "@/components/sections/section-intro";
 import { SectionContainer } from "@/components/ui/section-container";
+import { solutionSections } from "@/data/solutions";
 
-const serviceCards = [
-  {
-    title: "Продукт и развитие",
-    items: ["Сегментации", "CustDev, JTBD, продуктовые исследования", "Оценка концепций"],
-    Icon: BarChart3,
-  },
-  {
-    title: "Клиенты и поведение",
-    items: [
-      "Исследование поведения пользователей",
-      "CJM / карты пользовательского опыта",
-      "UX / пользовательский опыт",
-    ],
-    Icon: Users2,
-  },
-  {
-    title: "Бренд",
-    items: ["BHT, исследования восприятия бренда", "Проверка позиционирования", "Оценка рекламы и продвижения"],
-    Icon: Target,
-  },
-] as const;
+const sectionIcons: Record<string, LucideIcon> = {
+  "market-opportunities": Compass,
+  "strong-brand": Target,
+  "product-demand": Package,
+  "customer-experience": HeartHandshake,
+  "decision-measurement": Ruler,
+};
 
 export function ServicesMethodsSection() {
   return (
@@ -35,33 +23,50 @@ export function ServicesMethodsSection() {
             eyebrow="Наши услуги"
             title="Понятные методы для сложных задач."
           />
-          <div className="mt-10 grid gap-4 lg:grid-cols-3">
-            {serviceCards.map((card, idx) => (
-              <article
-                key={card.title}
-                className={`glass-card-l2 services-method-card flex h-full flex-col rounded-3xl p-5 sm:p-6 ${idx === 0 ? "border-[rgba(108,92,231,0.24)]" : ""}`}
-              >
-                <div className="mb-4 flex items-center gap-3">
-                  <div className="glass-chip-l3 services-method-icon rounded-xl p-2.5">
-                    <card.Icon size={27} className="text-[#2F3445]" />
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {solutionSections.map((section, idx) => {
+              const Icon = sectionIcons[section.id] ?? Compass;
+
+              return (
+                <article
+                  key={section.id}
+                  className={`glass-card-l2 services-method-card flex h-full flex-col rounded-3xl p-5 sm:p-6 ${idx === 0 ? "border-[rgba(108,92,231,0.24)]" : ""}`}
+                >
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="glass-chip-l3 services-method-icon rounded-xl p-2.5">
+                      <Icon size={27} className="text-[#2F3445]" />
+                    </div>
+                    <h3 className="services-method-title text-xl font-semibold text-[var(--color-midnight)] sm:text-2xl">
+                      {section.title}
+                    </h3>
                   </div>
-                  <h3 className="services-method-title text-2xl font-semibold text-[var(--color-midnight)] sm:text-[30px]">
-                    {card.title}
-                  </h3>
-                </div>
-                <ul className="mt-3 space-y-2.5 text-[16px] leading-relaxed text-[#5A6172]">
-                  {card.items.map((item) => (
-                    <li key={item} className="services-method-item flex items-start gap-3">
-                      <span className="services-method-bullet mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent-indigo)]" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-auto pt-4">
-                  <div className="services-method-divider h-px" />
-                </div>
-              </article>
-            ))}
+                  <ul className="mt-3 space-y-2.5 text-[16px] leading-relaxed text-[#5A6172]">
+                    {section.methods.map((method) => (
+                      <li key={method.id} className="services-method-item flex items-start gap-3">
+                        <span className="services-method-bullet mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent-indigo)]" />
+                        <span>{method.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-auto pt-4">
+                    <div className="services-method-divider h-px" />
+                  </div>
+                </article>
+              );
+            })}
+
+            <Link
+              href="/research-solutions"
+              className="glass-card-l2 services-method-card flex h-full flex-col justify-between rounded-3xl p-5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-focus)] sm:p-6"
+            >
+              <p className="text-xl font-semibold leading-snug text-[var(--color-midnight)] sm:text-2xl">
+                Как работает каждый метод и когда его применять
+              </p>
+              <span className="mt-6 flex items-center gap-2 text-sm font-semibold text-[var(--color-accent-indigo)]">
+                Смотреть исследовательские решения
+                <ArrowRight size={16} aria-hidden="true" />
+              </span>
+            </Link>
           </div>
         </FadeIn>
       </SectionContainer>

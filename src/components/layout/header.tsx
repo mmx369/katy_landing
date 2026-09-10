@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 import { SiteLogo } from "@/components/brand/site-logo";
@@ -11,9 +12,17 @@ import { navigationItems } from "@/data/navigation";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const closeMenu = () => {
     setIsMenuOpen(false);
+  };
+
+  const isActive = (href: string) => {
+    const [path] = href.split("#");
+    const route = path.replace(/\/$/, "") || "/";
+
+    return route === "/" ? pathname === "/" : pathname === route || pathname.startsWith(`${route}/`);
   };
 
   return (
@@ -22,18 +31,27 @@ export function Header() {
         <div className="flex min-h-[60px] items-center justify-between gap-4">
           <SiteLogo size="xs" variant="full" priority onNavigate={closeMenu} />
           <nav
-            className="hidden items-center gap-8 text-sm font-medium text-[var(--color-midnight-soft)] lg:flex"
+            className="hidden items-center gap-1 text-sm font-medium text-[var(--color-midnight-soft)] lg:flex"
             aria-label="Основная навигация"
           >
-            {navigationItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="transition hover:text-[var(--color-accent-violet)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)]"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navigationItems.map((item) => {
+              const active = isActive(item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`nav-pill px-3.5 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)] ${
+                    active
+                      ? "nav-pill-active font-semibold"
+                      : "hover:text-[var(--color-accent-violet)]"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
           <div className="hidden lg:block">
             <Button
@@ -61,16 +79,25 @@ export function Header() {
             aria-label="Мобильная навигация"
           >
             <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2">
-              {navigationItems.map((item) => (
-                <Link
-                  key={`mobile-${item.href}`}
-                  href={item.href}
-                  onClick={closeMenu}
-                  className="rounded-xl border border-[rgba(255,255,255,0.75)] bg-[rgba(255,255,255,0.62)] px-3 py-2 font-medium shadow-[0_6px_14px_rgba(20,30,60,0.05)] transition-all hover:bg-[rgba(108,92,231,0.14)] hover:text-[var(--color-accent-violet)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navigationItems.map((item) => {
+                const active = isActive(item.href);
+
+                return (
+                  <Link
+                    key={`mobile-${item.href}`}
+                    href={item.href}
+                    onClick={closeMenu}
+                    aria-current={active ? "page" : undefined}
+                    className={`rounded-xl border px-3 py-2 font-medium transition-all ${
+                      active
+                        ? "nav-plate-active pl-4 font-semibold"
+                        : "border-[rgba(255,255,255,0.75)] bg-[rgba(255,255,255,0.62)] shadow-[0_6px_14px_rgba(20,30,60,0.05)] hover:bg-[rgba(108,92,231,0.14)] hover:text-[var(--color-accent-violet)]"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </div>
           </nav>
         ) : null}
