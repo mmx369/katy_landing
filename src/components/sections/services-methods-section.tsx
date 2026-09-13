@@ -4,7 +4,10 @@ import Link from "next/link";
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionIntro } from "@/components/sections/section-intro";
 import { SectionContainer } from "@/components/ui/section-container";
+import { homeContent } from "@/data/home";
 import { solutionSections } from "@/data/solutions";
+import { getLocale } from "@/lib/get-locale";
+import { localizePath } from "@/lib/i18n";
 
 const sectionIcons: Record<string, LucideIcon> = {
   "market-opportunities": Compass,
@@ -14,17 +17,17 @@ const sectionIcons: Record<string, LucideIcon> = {
   "decision-measurement": Ruler,
 };
 
-export function ServicesMethodsSection() {
+export async function ServicesMethodsSection() {
+  const locale = await getLocale();
+  const { services } = homeContent[locale];
+
   return (
     <section className="py-12 sm:py-20">
       <SectionContainer>
         <FadeIn>
-          <SectionIntro
-            eyebrow="Наши услуги"
-            title="Понятные методы для сложных задач."
-          />
+          <SectionIntro eyebrow={services.eyebrow} title={services.title} />
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {solutionSections.map((section, idx) => {
+            {solutionSections[locale].map((section, idx) => {
               const Icon = sectionIcons[section.id] ?? Compass;
 
               return (
@@ -56,14 +59,14 @@ export function ServicesMethodsSection() {
             })}
 
             <Link
-              href="/research-solutions"
+              href={localizePath("/research-solutions", locale)}
               className="glass-card-l2 services-method-card flex h-full flex-col justify-between rounded-3xl p-5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-focus)] sm:p-6"
             >
               <p className="text-xl font-semibold leading-snug text-[var(--color-midnight)] sm:text-2xl">
-                Как работает каждый метод и когда его применять
+                {services.linkTitle}
               </p>
               <span className="mt-6 flex items-center gap-2 text-sm font-semibold text-[var(--color-accent-indigo)]">
-                Смотреть исследовательские решения
+                {services.linkLabel}
                 <ArrowRight size={16} aria-hidden="true" />
               </span>
             </Link>

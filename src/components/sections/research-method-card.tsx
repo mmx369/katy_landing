@@ -3,10 +3,12 @@
 import { ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 
+import type { CommonContent } from "@/data/common";
 import type { MethodList, ResearchMethod } from "@/data/solutions";
 
 interface ResearchMethodCardProps {
   method: ResearchMethod;
+  labels: CommonContent["solutions"];
 }
 
 function MethodListBlock({ list, label }: { list: MethodList; label?: string }) {
@@ -32,7 +34,7 @@ function MethodListBlock({ list, label }: { list: MethodList; label?: string }) 
   );
 }
 
-export function ResearchMethodCard({ method }: ResearchMethodCardProps) {
+export function ResearchMethodCard({ method, labels }: ResearchMethodCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const panelId = useId();
   const [lead, ...restParagraphs] = method.paragraphs;
@@ -78,7 +80,7 @@ export function ResearchMethodCard({ method }: ResearchMethodCardProps) {
           {method.note ? (
             <div className="rounded-2xl bg-[var(--color-note)] p-4">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-accent-plum)]">
-                Важно
+                {labels.noteLabel}
               </p>
               <p className="mt-2 text-sm leading-relaxed text-[var(--color-midnight-soft)]">
                 {method.note}
@@ -86,9 +88,7 @@ export function ResearchMethodCard({ method }: ResearchMethodCardProps) {
             </div>
           ) : null}
 
-          {method.usage ? (
-            <MethodListBlock list={method.usage} label="Когда стоит использовать метод" />
-          ) : null}
+          {method.usage ? <MethodListBlock list={method.usage} label={labels.usageLabel} /> : null}
         </div>
       </div>
 
@@ -97,9 +97,9 @@ export function ResearchMethodCard({ method }: ResearchMethodCardProps) {
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={isOpen}
         aria-controls={panelId}
-        className="mt-auto flex items-center gap-1.5 self-start pt-5 text-sm font-semibold text-[var(--color-accent-indigo)] transition hover:text-[var(--color-accent-violet)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-focus)]"
+        className="mt-auto flex cursor-pointer items-center gap-1.5 self-start pt-5 text-sm font-semibold text-[var(--color-accent-indigo)] transition hover:text-[var(--color-accent-violet)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-focus)]"
       >
-        {isOpen ? "Свернуть" : "Подробнее о методе"}
+        {isOpen ? labels.collapse : labels.expand}
         <ChevronDown
           size={16}
           aria-hidden="true"

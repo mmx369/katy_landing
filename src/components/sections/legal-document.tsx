@@ -1,8 +1,12 @@
+import Link from "next/link";
+
 import type { LegalSection } from "@/types/content";
 
 interface LegalDocumentProps {
   revision: string;
   sections: LegalSection[];
+  /** Rendered only for locales whose text is an unofficial translation of the Russian original. */
+  notice?: { text: string; linkLabel: string; href: string } | null;
   children?: React.ReactNode;
 }
 
@@ -18,12 +22,25 @@ function Paragraphs({ items }: { items: string[] }) {
   );
 }
 
-export function LegalDocument({ revision, sections, children }: LegalDocumentProps) {
+export function LegalDocument({ revision, sections, notice, children }: LegalDocumentProps) {
   return (
     <article className="surface-panel max-w-[70ch] rounded-2xl p-6 text-[15px] leading-relaxed text-[var(--color-muted-strong)] sm:p-8">
       <p className="chip-pill inline-flex rounded-full px-3 py-1 text-xs font-semibold">
         {revision}
       </p>
+
+      {notice ? (
+        <p className="mt-5 rounded-xl border border-[rgba(108,92,231,0.24)] bg-[var(--color-note)] px-4 py-3 text-sm">
+          {notice.text}{" "}
+          <Link
+            href={notice.href}
+            className="font-medium text-[var(--color-accent-indigo)] underline underline-offset-2"
+          >
+            {notice.linkLabel}
+          </Link>
+          .
+        </p>
+      ) : null}
 
       {sections.map((section, index) => (
         <section key={section.title ?? index} className={index === 0 ? "mt-6" : "mt-8"}>

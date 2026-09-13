@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { consentVersion } from "@/data/legal";
+import type { CommonContent } from "@/data/common";
+import { localizePath, type Locale } from "@/lib/i18n";
 import {
   COMPANY_MAX_LENGTH,
   CONTACT_MAX_LENGTH,
@@ -18,6 +19,9 @@ import {
 } from "@/lib/contact-validation";
 
 interface ContactFormProps {
+  locale: Locale;
+  labels: CommonContent["form"];
+  consentVersion: string;
   variant?: "request" | "contact";
 }
 
@@ -36,7 +40,7 @@ const initialState: FormState = {
 };
 
 // A proxy in front of the app answers with HTML on 502/504, so the body is not always JSON.
-async function readErrorMessage(response: Response) {
+async function readErrorMessage(response: Response, labels: CommonContent["form"]) {
   try {
     const body: unknown = await response.json();
     if (body && typeof body === "object" && "error" in body && typeof body.error === "string") {
@@ -46,12 +50,15 @@ async function readErrorMessage(response: Response) {
     // Fall through to the status-based message below.
   }
 
-  return response.status >= 500
-    ? "Сервер сейчас недоступен. Напишите нам на ask@decode-research.ru."
-    : "Не удалось отправить заявку. Попробуйте позже.";
+  return response.status >= 500 ? labels.serverUnavailable : labels.sendFailed;
 }
 
-export function ContactForm({ variant = "request" }: ContactFormProps) {
+export function ContactForm({
+  locale,
+  labels,
+  consentVersion,
+  variant = "request",
+}: ContactFormProps) {
   const [form, setForm] = useState<FormState>(initialState);
   const [companyWebsite, setCompanyWebsite] = useState("");
   const [consentGiven, setConsentGiven] = useState(false);
@@ -112,6 +119,7 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
         body: JSON.stringify({
           ...form,
           variant,
+          locale,
           companyWebsite,
           consent: true,
           consentVersion,
@@ -119,7 +127,7 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
       });
 
       if (!response.ok) {
-        setSubmitError(await readErrorMessage(response));
+        setSubmitError(await readErrorMessage(response, labels));
         return;
       }
 
@@ -136,8 +144,8 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
     } catch (error) {
       setSubmitError(
         error instanceof DOMException && error.name === "TimeoutError"
-          ? "Сервер не ответил вовремя. Напишите нам на ask@decode-research.ru."
-          : "Ошибка сети. Проверьте интернет и попробуйте еще раз."
+          ? labels.timeout
+          : labels.networkError
       );
     } finally {
       setIsSubmitting(false);
@@ -173,7 +181,7 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
 
       <div>
         <label className="text-sm font-medium text-[var(--color-midnight)]" htmlFor="name">
-          Как вас зовут
+          {labels.nameLabel}
         </label>
         <input
           id="name"
@@ -182,22 +190,22 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
           onBlur={() => setTouched((prev) => ({ ...prev, name: true }))}
           onChange={(event) => handleChange("name", event.target.value)}
           className={inputClassName}
-          placeholder="Например, Анна"
+          placeholder={labels.namePlaceholder}
           autoComplete="name"
           maxLength={NAME_MAX_LENGTH}
           required
         />
         {touched.name && errors.name ? (
-          <p className="mt-2 text-xs text-[var(--color-error)]">
-            Укажите имя, чтобы мы могли обратиться корректно.
-          </p>
+          <p className="mt-2 text-xs text-[var(--color-error)]">{labels.nameError}</p>
         ) : null}
       </div>
 
       <div>
         <label className="text-sm font-medium text-[var(--color-midnight)]" htmlFor="company">
-          Компания
-          <span className="ml-1.5 font-normal text-[var(--color-muted-strong)]">- необязательно</span>
+          {labels.companyLabel}
+          <span className="ml-1.5 font-normal text-[var(--color-muted-strong)]">
+            {labels.companyOptional}
+          </span>
         </label>
         <input
           id="company"
@@ -206,20 +214,18 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
           onBlur={() => setTouched((prev) => ({ ...prev, company: true }))}
           onChange={(event) => handleChange("company", event.target.value)}
           className={inputClassName}
-          placeholder="Название компании"
+          placeholder={labels.companyPlaceholder}
           autoComplete="organization"
           maxLength={COMPANY_MAX_LENGTH}
         />
         {touched.company && errors.company ? (
-          <p className="mt-2 text-xs text-[var(--color-error)]">
-            Название компании слишком короткое или слишком длинное.
-          </p>
+          <p className="mt-2 text-xs text-[var(--color-error)]">{labels.companyError}</p>
         ) : null}
       </div>
 
       <div>
         <label className="text-sm font-medium text-[var(--color-midnight)]" htmlFor="task">
-          Опишите вашу задачу
+          {labels.taskLabel}
         </label>
         <textarea
           id="task"
@@ -228,20 +234,18 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
           onBlur={() => setTouched((prev) => ({ ...prev, task: true }))}
           onChange={(event) => handleChange("task", event.target.value)}
           className={`${inputClassName} min-h-34 resize-y`}
-          placeholder="Что случилось? В чем бизнес-проблема? Что нужно изучить? Какие есть гипотезы? Какая аудитория? В какие сроки нужен результат?"
+          placeholder={labels.taskPlaceholder}
           maxLength={TASK_MAX_LENGTH}
           required
         />
         {touched.task && errors.task ? (
-          <p className="mt-2 text-xs text-[var(--color-error)]">
-            Добавьте чуть больше контекста, чтобы мы предложили точный подход.
-          </p>
+          <p className="mt-2 text-xs text-[var(--color-error)]">{labels.taskError}</p>
         ) : null}
       </div>
 
       <div>
         <label className="text-sm font-medium text-[var(--color-midnight)]" htmlFor="contact">
-          Как с вами связаться
+          {labels.contactLabel}
         </label>
         <input
           id="contact"
@@ -250,15 +254,13 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
           onBlur={() => setTouched((prev) => ({ ...prev, contact: true }))}
           onChange={(event) => handleChange("contact", event.target.value)}
           className={inputClassName}
-          placeholder="Укажите телефон или email"
+          placeholder={labels.contactPlaceholder}
           autoComplete="email"
           maxLength={CONTACT_MAX_LENGTH}
           required
         />
         {touched.contact && errors.contact ? (
-          <p className="mt-2 text-xs text-[var(--color-error)]">
-            Нужен корректный контакт, чтобы мы могли быстро вернуться с ответом.
-          </p>
+          <p className="mt-2 text-xs text-[var(--color-error)]">{labels.contactError}</p>
         ) : null}
       </div>
 
@@ -291,28 +293,28 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
             <Check size={13} strokeWidth={3.5} className="text-white" />
           </span>
           <span className="text-sm leading-relaxed text-[var(--color-muted-strong)]">
-            Я даю{" "}
+            {labels.consentBefore}
             <Link
-              href="/personal-data-consent"
+              href={localizePath("/personal-data-consent", locale)}
               onClick={(event) => event.stopPropagation()}
               className="font-medium text-[var(--color-accent-indigo)] underline decoration-[rgba(79,70,229,0.35)] underline-offset-2 transition-colors hover:text-[var(--color-accent-violet)] hover:decoration-[rgba(124,58,237,0.55)] motion-reduce:transition-none"
             >
-              согласие на обработку персональных данных
-            </Link>{" "}
-            в соответствии с{" "}
-            <Link
-              href="/privacy"
-              onClick={(event) => event.stopPropagation()}
-              className="font-medium text-[var(--color-accent-indigo)] underline decoration-[rgba(79,70,229,0.35)] underline-offset-2 transition-colors hover:text-[var(--color-accent-violet)] hover:decoration-[rgba(124,58,237,0.55)] motion-reduce:transition-none"
-            >
-              Политикой обработки персональных данных
+              {labels.consentLinkLabel}
             </Link>
-            .
+            {labels.consentMiddle}
+            <Link
+              href={localizePath("/privacy", locale)}
+              onClick={(event) => event.stopPropagation()}
+              className="font-medium text-[var(--color-accent-indigo)] underline decoration-[rgba(79,70,229,0.35)] underline-offset-2 transition-colors hover:text-[var(--color-accent-violet)] hover:decoration-[rgba(124,58,237,0.55)] motion-reduce:transition-none"
+            >
+              {labels.consentPolicyLabel}
+            </Link>
+            {labels.consentAfter}
           </span>
         </label>
         {showConsentError ? (
           <p id="consent-error" className="mt-2 text-xs text-[var(--color-error)]">
-            Отметьте согласие, чтобы отправить заявку.
+            {labels.consentError}
           </p>
         ) : null}
       </div>
@@ -323,15 +325,15 @@ export function ContactForm({ variant = "request" }: ContactFormProps) {
           disabled={isSubmitting}
           className="w-full text-center sm:w-auto"
         >
-          {isSubmitting ? "Отправляем..." : "Отправить заявку"}
+          {isSubmitting ? labels.submitting : labels.submit}
         </Button>
-        <p className="text-xs text-[var(--color-muted)]">Обычно отвечаем в течение дня.</p>
+        <p className="text-xs text-[var(--color-muted)]">{labels.responseHint}</p>
       </div>
 
       <div role="status" aria-live="polite">
         {sent ? (
           <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-            Спасибо. Заявка отправлена, мы свяжемся с вами в ближайшее время.
+            {labels.success}
           </p>
         ) : null}
       </div>

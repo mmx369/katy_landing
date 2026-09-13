@@ -1,17 +1,22 @@
 import { Card } from "@/components/ui/card";
+import { commonContent } from "@/data/common";
 import { knowledgeMethodTiles } from "@/data/knowledge";
+import { getLocale } from "@/lib/get-locale";
 
-export function KnowledgeBaseGrid() {
+export async function KnowledgeBaseGrid() {
+  const locale = await getLocale();
+  const { methodLabel } = commonContent[locale].knowledge;
+
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      {knowledgeMethodTiles.map((tile) => (
+      {knowledgeMethodTiles[locale].map((tile) => (
         <Card
           key={tile.id}
           glass
           className="min-h-[260px] border-[rgba(108,92,231,0.16)] bg-[linear-gradient(145deg,rgba(255,255,255,0.58),rgba(255,255,255,0.22))]"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]">
-            Методика
+            {methodLabel}
           </p>
           <h3 className="mt-3 text-3xl font-semibold leading-none tracking-[-0.02em] text-[var(--color-midnight)] sm:text-4xl">
             {tile.method}

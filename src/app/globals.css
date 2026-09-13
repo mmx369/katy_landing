@@ -477,6 +477,96 @@ h4 {
   background: linear-gradient(180deg, #4f46e5, #7c3aed);
 }
 
+.submenu-panel {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(247, 248, 255, 0.97));
+  box-shadow:
+    0 22px 48px rgba(20, 30, 60, 0.18),
+    0 0 0 1px rgba(108, 92, 231, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  backdrop-filter: blur(10px) saturate(140%);
+}
+
+.submenu-panel::before {
+  content: "";
+  position: absolute;
+  left: 1.25rem;
+  right: 1.25rem;
+  top: 0;
+  height: 2px;
+  border-radius: 999px;
+  opacity: 0.8;
+  background: linear-gradient(
+    90deg,
+    rgba(79, 70, 229, 0),
+    #4f46e5 28%,
+    #7c3aed 72%,
+    rgba(124, 58, 237, 0)
+  );
+}
+
+.submenu-item {
+  position: relative;
+  isolation: isolate;
+  transition: color 200ms ease;
+}
+
+.submenu-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0;
+  background: linear-gradient(90deg, rgba(79, 70, 229, 0.13), rgba(124, 58, 237, 0.03));
+  transition: opacity 200ms ease;
+}
+
+.submenu-item:hover,
+.submenu-item:focus-visible {
+  color: var(--color-accent-violet);
+}
+
+.submenu-item:hover::before,
+.submenu-item:focus-visible::before {
+  opacity: 1;
+}
+
+.submenu-index {
+  color: rgba(79, 70, 229, 0.4);
+  transition: color 200ms ease;
+}
+
+.submenu-arrow {
+  color: var(--color-accent-indigo);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.submenu-item:hover .submenu-index,
+.submenu-item:focus-visible .submenu-index {
+  color: var(--color-accent-indigo);
+}
+
+.submenu-item:hover .submenu-arrow,
+.submenu-item:focus-visible .submenu-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Must follow the rules above: a later declaration of equal specificity wins. */
+@media (prefers-reduced-motion: reduce) {
+  .submenu-item,
+  .submenu-item::before,
+  .submenu-index,
+  .submenu-arrow {
+    transition: none;
+  }
+}
+
 .premium-cta-button,
 .header-cta-button {
   position: relative;

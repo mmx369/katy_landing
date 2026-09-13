@@ -1,12 +1,14 @@
 import { ResearchMethodCard } from "@/components/sections/research-method-card";
+import type { CommonContent } from "@/data/common";
 import type { SolutionSection } from "@/data/solutions";
 
 interface SolutionSectionCardProps {
   section: SolutionSection;
   index: number;
+  labels: CommonContent["solutions"];
 }
 
-export function SolutionSectionCard({ section, index }: SolutionSectionCardProps) {
+export function SolutionSectionCard({ section, index, labels }: SolutionSectionCardProps) {
   return (
     <section
       id={section.id}
@@ -21,7 +23,7 @@ export function SolutionSectionCard({ section, index }: SolutionSectionCardProps
 
       <header className="relative max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
-          Направление
+          {labels.sectionLabel}
         </p>
         <h2 className="mt-3 font-serif text-2xl leading-tight text-[var(--color-midnight)] sm:text-4xl">
           {section.title}
@@ -35,7 +37,7 @@ export function SolutionSectionCard({ section, index }: SolutionSectionCardProps
 
       <div className="mt-7 grid gap-4 lg:grid-cols-2">
         {section.methods.map((method) => (
-          <ResearchMethodCard key={method.id} method={method} />
+          <ResearchMethodCard key={method.id} method={method} labels={labels} />
         ))}
       </div>
     </section>

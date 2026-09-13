@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import nodemailer from "nodemailer";
+import { commonContent } from "@/data/common";
 import { consentVersion } from "@/data/legal";
+import { defaultLocale, isLocale, localeMeta, type Locale } from "@/lib/i18n";
 import {
   isValidCompany,
   isValidContact,
@@ -20,6 +22,8 @@ interface ContactPayload {
   companyWebsite?: string;
   consent: boolean;
   consentVersion: string;
+  /** Only selects the language of the reply, so a payload without it still gets processed. */
+  locale?: Locale;
 }
 
 const RATE_WINDOW_MS = 10 * 60 * 1000;
@@ -60,8 +64,14 @@ function isValidPayload(payload: unknown): payload is ContactPayload {
     typeof candidate.contact === "string" &&
     typeof candidate.consent === "boolean" &&
     typeof candidate.consentVersion === "string" &&
-    (candidate.companyWebsite === undefined || typeof candidate.companyWebsite === "string")
+    (candidate.companyWebsite === undefined || typeof candidate.companyWebsite === "string") &&
+    (candidate.locale === undefined || isLocale(candidate.locale))
   );
+}
+
+function readLocale(body: unknown): Locale {
+  const candidate = (body as { locale?: unknown } | null)?.locale;
+  return typeof candidate === "string" && isLocale(candidate) ? candidate : defaultLocale;
 }
 
 function getEmailDomain(value: string) {
@@ -237,25 +247,26 @@ function escapeHtml(value: string) {
 }
 
 export async function POST(request: Request) {
+  let messages = commonContent[defaultLocale].api;
+
   try {
     cleanupMemoryStores();
 
     if (isCrossSiteRequest(request)) {
-      return NextResponse.json({ error: "Некорректный источник запроса." }, { status: 403 });
+      return NextResponse.json({ error: messages.badOrigin }, { status: 403 });
     }
 
     const body: unknown = await request.json();
+    const locale = readLocale(body);
+    messages = commonContent[locale].api;
 
     if (!isValidPayload(body)) {
-      return NextResponse.json({ error: "Некорректный формат данных." }, { status: 400 });
+      return NextResponse.json({ error: messages.badPayload }, { status: 400 });
     }
 
     const clientIp = extractClientIp(request);
     if (checkRateLimit(clientIp)) {
-      return NextResponse.json(
-        { error: "Слишком много запросов. Попробуйте отправить форму чуть позже." },
-        { status: 429 }
-      );
+      return NextResponse.json({ error: messages.rateLimited }, { status: 429 });
     }
 
     const payload = {
@@ -272,17 +283,11 @@ export async function POST(request: Request) {
     }
 
     if (!payload.consent) {
-      return NextResponse.json(
-        { error: "Отметьте согласие на обработку персональных данных." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: messages.consentRequired }, { status: 400 });
     }
 
     if (payload.consentVersion !== consentVersion) {
-      return NextResponse.json(
-        { error: "Текст согласия обновился. Обновите страницу и отправьте заявку еще раз." },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: messages.consentOutdated }, { status: 409 });
     }
 
     if (
@@ -291,31 +296,22 @@ export async function POST(request: Request) {
       !isValidTask(payload.task) ||
       !isValidContact(payload.contact)
     ) {
-      return NextResponse.json({ error: "Заполните поля формы корректно." }, { status: 400 });
+      return NextResponse.json({ error: messages.invalidFields }, { status: 400 });
     }
 
     if (isDisposableEmail(payload.contact)) {
-      return NextResponse.json(
-        { error: "Укажите рабочий адрес электронной почты или телефон." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: messages.disposableEmail }, { status: 400 });
     }
 
     const fingerprint = buildSubmissionFingerprint(clientIp, payload.contact, payload.task);
     if (isDuplicateSubmission(fingerprint)) {
-      return NextResponse.json(
-        { error: "Похожая заявка уже отправлена недавно. Дождитесь ответа или уточните детали." },
-        { status: 429 }
-      );
+      return NextResponse.json({ error: messages.duplicate }, { status: 429 });
     }
 
     const mailer = getMailer();
     if (!mailer) {
       console.error("[contact] SMTP не настроен: проверьте переменные окружения");
-      return NextResponse.json(
-        { error: "Не удалось отправить сообщение. Попробуйте еще раз." },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: messages.sendFailed }, { status: 500 });
     }
 
     const replyToAddress = isValidEmail(payload.contact) ? payload.contact : undefined;
@@ -338,6 +334,7 @@ export async function POST(request: Request) {
         `Имя: ${payload.name}`,
         payload.company ? `Компания: ${payload.company}` : "",
         `Контакт: ${payload.contact}`,
+        `Язык сайта: ${localeMeta[locale].name}`,
         "",
         "Согласие на обработку персональных данных: Да",
         `Дата и время согласия: ${consentedAt} (МСК)`,
@@ -353,6 +350,7 @@ export async function POST(request: Request) {
         <p><strong>Имя:</strong> ${escapeHtml(payload.name)}</p>
         ${companyLine}
         <p><strong>Контакт:</strong> ${escapeHtml(payload.contact)}</p>
+        <p><strong>Язык сайта:</strong> ${escapeHtml(localeMeta[locale].name)}</p>
         <p><strong>Тип формы:</strong> ${payload.variant === "request" ? "Оставить заявку" : "Контакты"}</p>
         <p><strong>Согласие на обработку персональных данных:</strong> Да</p>
         <p><strong>Дата и время согласия:</strong> ${escapeHtml(consentedAt)} (МСК)</p>
@@ -366,9 +364,6 @@ export async function POST(request: Request) {
   } catch (error) {
     logDeliveryFailure(error);
 
-    return NextResponse.json(
-      { error: "Не удалось отправить сообщение. Попробуйте еще раз." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: messages.sendFailed }, { status: 500 });
   }
 }

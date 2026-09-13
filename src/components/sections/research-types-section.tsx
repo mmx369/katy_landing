@@ -1,62 +1,46 @@
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionContainer } from "@/components/ui/section-container";
+import { homeContent, type HomeContent } from "@/data/home";
+import { getLocale } from "@/lib/get-locale";
 
-const qualitativeItems = [
-  "Глубинные интервью, фокус-группы",
-  "CustDev, JTBD, метод дилемм (реальные потребности и логика выбора)",
-  "Когнитивное тестирование формулировок и названий",
-  "Этнография, дневники",
-];
+type ResearchTypeCard = HomeContent["researchTypes"]["qualitative"];
 
-const quantitativeItems = [
-  "Сегментация",
-  "BHT, тестирование креатива, воронка бренда",
-  "Метод Кано, PSM, TURF-анализ",
-  "Онлайн-опросы (массовые и узкие сегменты)",
-  "Метрики клиентского опыта (NPS, CSAT, CSI, CES)",
-];
+function TypeCard({ card, className }: { card: ResearchTypeCard; className: string }) {
+  return (
+    <article className={`rounded-3xl p-6 sm:p-8 lg:h-full ${className}`}>
+      <h2 className="font-serif text-3xl leading-tight text-[var(--color-midnight)] sm:text-4xl">
+        {card.title}
+      </h2>
+      <p className="mt-5 text-2xl leading-snug text-[var(--color-midnight)]">
+        {card.leadBefore}
+        <span className="gradient-text">{card.leadAccent}</span>
+        {card.leadAfter}
+      </p>
+      <ul className="mt-6 space-y-2.5 text-[17px] leading-relaxed text-[#374151]">
+        {card.items.map((item) => (
+          <li key={item} className="flex items-start gap-3">
+            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent-indigo)]" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </article>
+  );
+}
 
-export function ResearchTypesSection() {
+export async function ResearchTypesSection() {
+  const { researchTypes } = homeContent[await getLocale()];
+
   return (
     <section className="py-12 sm:py-20">
       <SectionContainer>
         <FadeIn>
           <div className="grid gap-4 lg:grid-cols-2">
-            <article className="glass-card-l2 rounded-3xl border-[rgba(108,92,231,0.2)] p-6 sm:p-8 lg:h-full">
-              <h2 className="font-serif text-3xl leading-tight text-[var(--color-midnight)] sm:text-4xl">
-                Качественные исследования
-              </h2>
-              <p className="mt-5 text-2xl leading-snug text-[var(--color-midnight)]">
-                Отвечаем на вопрос <span className="gradient-text">почему</span> и
-                строим гипотезы
-              </p>
-              <ul className="mt-6 space-y-2.5 text-[17px] leading-relaxed text-[#374151]">
-                {qualitativeItems.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent-indigo)]" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
-
-            <article className="surface-panel rounded-3xl p-6 sm:p-8 lg:h-full">
-              <h2 className="font-serif text-3xl leading-tight text-[var(--color-midnight)] sm:text-4xl">
-                Количественные исследования
-              </h2>
-              <p className="mt-5 text-2xl leading-snug text-[var(--color-midnight)]">
-                Оцениваем <span className="gradient-text">сколько</span>,
-                проверяем гипотезы, следим за динамикой
-              </p>
-              <ul className="mt-6 space-y-2.5 text-[17px] leading-relaxed text-[#374151]">
-                {quantitativeItems.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent-indigo)]" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
+            <TypeCard
+              card={researchTypes.qualitative}
+              className="glass-card-l2 border-[rgba(108,92,231,0.2)]"
+            />
+            <TypeCard card={researchTypes.quantitative} className="surface-panel" />
           </div>
         </FadeIn>
       </SectionContainer>

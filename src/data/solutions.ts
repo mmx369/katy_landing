@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/i18n";
+
 export interface MethodList {
   intro: string;
   items: string[];
@@ -20,7 +22,7 @@ export interface SolutionSection {
   methods: ResearchMethod[];
 }
 
-export const solutionSections: SolutionSection[] = [
+const ru: SolutionSection[] = [
   {
     id: "market-opportunities",
     title: "Понять рынок и найти возможности",
@@ -390,3 +392,376 @@ export const solutionSections: SolutionSection[] = [
     ],
   },
 ];
+
+const en: typeof ru = [
+  {
+    id: "market-opportunities",
+    title: "Understand the market and find opportunities",
+    summary:
+      "Research that shows who your customers are, what they need and where the growth points of the business lie.",
+    methods: [
+      {
+        id: "segmentation",
+        title: "Segmentation",
+        paragraphs: [
+          "Segmentation divides a market or a customer base into groups of consumers who are similar in their needs, behaviour, motivation or value to the business. Unlike a classification by gender, age or income, segmentation is built on finding the factors that genuinely explain differences in purchasing behaviour and determine how an audience reacts to the product, the price, the communication or the service.",
+          "Segmentation is built on value-based or motivational characteristics using multivariate statistical methods (cluster analysis, factor analysis). This makes it possible to identify natural consumer groups from a body of quantitative data rather than from expert assumptions.",
+        ],
+        usage: {
+          intro: "A segmentation study is useful when you need to:",
+          items: [
+            "identify the most promising target audiences",
+            "understand how different customer groups differ",
+            "understand whom to sell the product to and how",
+            "adapt marketing communications to different audiences",
+            "build a personalised value proposition",
+            "optimise the product range",
+            "find out how to adapt the product for a new audience",
+          ],
+        },
+      },
+      {
+        id: "custdev",
+        title: "CustDev (Customer Development)",
+        paragraphs: [
+          "CustDev (Customer Development) is used in product work to understand users' real experience, their needs, decision-making motives and choice factors. The method is based on in-depth interviews and examines not declared preferences but a person's actual behaviour, their experience with existing solutions and the context in which the need arises.",
+          "The key feature of CustDev is that it analyses events that have already happened rather than hypothetical intentions. The interview is built around the user's past experience: how the problem arose, which alternatives were considered, why the decision was made, what caused dissatisfaction and which trade-offs had to be accepted. This approach significantly reduces the influence of cognitive biases and rationalised answers.",
+        ],
+        usage: {
+          intro: "CustDev is recommended when you need to:",
+          items: [
+            "understand users' real needs",
+            "find out why customers do not buy the product",
+            "refine the value proposition",
+            "develop a new product or service",
+            "find new opportunities for product development",
+            "improve the consumer funnel",
+          ],
+        },
+      },
+      {
+        id: "jtbd",
+        title: "JTBD (Jobs To Be Done)",
+        paragraphs: [
+          "JTBD (Jobs To Be Done) reveals what tasks a consumer faces in a specific life situation, which solutions can help and how they want to solve them. People do not buy products as such - they “hire” them to achieve a particular outcome. The object of the research is therefore neither the consumer nor the product, but the job the consumer needs to get done.",
+          "The study reconstructs the decision-making process: the trigger event, the existing alternatives, the forces resisting change, the expected outcomes and the trade-offs the consumer is prepared to accept. This approach uncovers the reasons behind behaviour, not just its manifestations.",
+        ],
+        usage: {
+          intro: "JTBD is particularly effective when you need to:",
+          items: [
+            "understand which job the user solves with the product",
+            "identify the reasons behind a choice between competitors",
+            "develop a new product or service",
+            "find unmet market needs",
+            "uncover alternative product usage scenarios",
+            "determine directions for innovation",
+            "build positioning based on value to the user",
+          ],
+        },
+      },
+      {
+        id: "dilemmas",
+        title: "The dilemma method",
+        paragraphs: [
+          "The dilemma method helps study deep attitudes and behavioural patterns in situations of uncertainty. It works when you need to understand how a person acts in a conflict of interests: between price and quality, habit and innovation, ethics and convenience. The respondent is offered a hypothetical contested situation with no right answer. Their choice and its justification reveal their true values and decision-making logic. The main advantage is that socially desirable answers are minimised.",
+        ],
+        usage: {
+          intro: "The dilemma method is effective when you need to:",
+          items: [
+            "understand how users make difficult decisions",
+            "identify the real criteria behind a choice",
+            "examine trade-offs between product characteristics",
+            "uncover hidden purchase motives",
+            "determine the relative importance of different product benefits",
+          ],
+        },
+      },
+    ],
+  },
+  {
+    id: "strong-brand",
+    title: "Build a strong brand",
+    summary:
+      "Research that lets you build competitive positioning, measure brand strength and make marketing communications more effective.",
+    methods: [
+      {
+        id: "bht",
+        title: "BHT (Brand Health Tracking)",
+        paragraphs: [
+          "BHT (Brand Health Tracking) monitors brand health, tracking how key brand indicators change over time and detecting shifts in consumer perception early. It typically measures a set of awareness, appeal and salience indicators for both the brand and its advertising: prompted awareness, intention to use or reject, brand and advertising appeal, brand image and the brand funnel.",
+          "BHT rests on the concept of brand equity, according to which brand strength is determined not only by awareness, but also by the quality of the associations formed, consumer loyalty, willingness to consider the brand when choosing and other indicators that define its long-term competitiveness.",
+        ],
+        indicators: {
+          intro: "Brand Health Tracking usually measures:",
+          items: [
+            "spontaneous and prompted brand awareness",
+            "consideration of the brand when choosing",
+            "brand usage",
+            "brand preference and purchase intention",
+            "loyalty and willingness to recommend the brand (NPS)",
+            "brand image attributes",
+            "brand equity and brand strength indicators",
+          ],
+        },
+        usage: {
+          intro: "Brand tracking is recommended when you need to:",
+          items: [
+            "monitor the brand's market position on a regular basis",
+            "keep the brand's market position under control and assess its strength",
+            "compare the brand with its main competitors",
+            "measure the impact of marketing activity",
+            "detect negative shifts in brand perception early",
+          ],
+        },
+      },
+      {
+        id: "creative-testing",
+        title: "Creative testing",
+        paragraphs: [
+          "Creative testing is a set of research techniques for evaluating the effectiveness of advertising materials before launch or during a campaign. Its main purpose is to determine how well the communication achieves its marketing goals: whether it attracts attention, is interpreted correctly by the target audience, builds the intended brand perception and prompts the desired consumer behaviour.",
+          "Depending on the objectives, the study may evaluate individual elements of the advertising (the key message, the visual, the characters, the packaging, the slogan, the call to action) or the communication as a whole.",
+        ],
+        usage: {
+          intro: "Creative testing is needed when you have to:",
+          items: [
+            "choose the most effective advertising concept",
+            "check that the advertising message is clear",
+            "assess the appeal of the visual materials",
+            "reduce the risk of launching ineffective communication",
+          ],
+        },
+      },
+      {
+        id: "perception-maps",
+        title: "Perception maps",
+        paragraphs: [
+          "A data visualisation method based on correspondence analysis. It shows which objects, brands, attributes or consumer segments are statistically related and which, conversely, differ substantially. The result is a map on which the distance between objects reflects their statistical proximity: the closer the points, the stronger the relationship between them.",
+        ],
+        usage: {
+          intro: "Correspondence analysis is recommended when you need to:",
+          items: [
+            "understand how consumers perceive competing brands",
+            "determine which attributes are most closely associated with each brand",
+            "build a market positioning map",
+            "examine the relationship between audience segments and their preferences",
+            "identify potential opportunities for brand repositioning",
+          ],
+        },
+      },
+      {
+        id: "bpf",
+        title: "BPF (Brand Position Fit)",
+        paragraphs: [
+          "The method compares how brands are perceived as images and assesses how far the actual perception of a brand matches its target positioning and how well the brand has differentiated itself from competitors in consumers' minds. It is based on Charles Osgood's psychometric semantic differential. The brand is rated on a series of bipolar scales made up of pairs of opposite attributes, for example “modern - outdated”, “reliable - unreliable”, “premium - mass market”. This measures not rational assessments but the structure of perception and the emotional image of the object in consumers' minds.",
+          "The resulting ratings form a multidimensional brand perception profile, which is then compared both with competitors and with the desired positioning.",
+        ],
+        usage: {
+          intro: "The method is especially useful when you need to:",
+          items: [
+            "assess the brand image",
+            "measure how far the perceived image matches the strategic positioning",
+            "compare the perception of your own brand with that of competitors",
+            "check that the positioning matches audience expectations",
+            "assess the impact of an advertising campaign on the brand image",
+            "study the perception of packaging or design",
+          ],
+        },
+      },
+    ],
+  },
+  {
+    id: "product-demand",
+    title: "Create a product in demand",
+    summary:
+      "Methods that help develop products the market wants, make product decisions based on data and reduce the risk of an unsuccessful launch.",
+    methods: [
+      {
+        id: "kano",
+        title: "The Kano model",
+        paragraphs: [
+          "The Kano model shows how individual product features affect willingness to buy. It rests on the idea that the link between product quality and customer satisfaction is non-linear: not all features are equally valuable to the consumer. Some are mandatory and taken for granted, others have a moderate effect on appeal, others still can create a “pleasant surprise” effect and build competitive advantage, while a fourth group can actively put people off.",
+          "Each feature is assessed for clarity, functionality (its presence) and dysfunctionality (its absence). Analysing the combinations of answers classifies every product feature as Must-be, Performance, Attractive, Indifferent or Reverse.",
+        ],
+        usage: {
+          intro: "The Kano model is applied when you need to:",
+          items: [
+            "set priorities for developing new features",
+            "understand which product characteristics genuinely matter to users",
+            "avoid developing features nobody wants",
+            "find the characteristics that can create a wow effect and set the product apart from competitors",
+            "remove the features that act as barriers",
+          ],
+        },
+      },
+      {
+        id: "mvp-testing",
+        title: "MVP testing",
+        paragraphs: [
+          "MVP (Minimum Viable Product) testing evaluates the minimum viable version of a product in order to validate the key product hypotheses before full-scale development begins. Unlike an evaluation of a finished product, MVP research aims to confirm that the proposed solution really does solve a meaningful user problem, holds value for the target audience and has the potential to be developed further.",
+          "The study analyses not only users' overall attitude to the product, but also demand for individual features, the clarity of the value proposition, the fit with user expectations, the barriers that arise and the usage scenarios. The results show which hypotheses have been confirmed, which need refinement and which should be abandoned, substantially reducing the cost of subsequent development.",
+        ],
+        usage: {
+          intro: "MVP research is especially useful when you need to:",
+          items: [
+            "test whether a product idea is viable",
+            "confirm the key hypotheses",
+            "define the minimum necessary functionality",
+            "collect feedback from the first users",
+            "determine the directions for further product development",
+          ],
+        },
+      },
+      {
+        id: "psm",
+        title: "PSM (Price Sensitivity Meter)",
+        subtitle: "Measuring price elasticity",
+        paragraphs: [
+          "PSM (Price Sensitivity Meter) is a method for researching consumer price sensitivity developed by the Dutch economist Peter Van Westendorp. It determines the price range consumers perceive as acceptable and reveals the psychological thresholds at which a price starts to feel too low (raising doubts about quality) or too high (reducing willingness to buy).",
+          "The technique is based on four questions that establish price perception thresholds: when the product seems too expensive, expensive, cheap and too cheap. The distribution of answers produces curves whose intersections identify the optimal price and the range of acceptable prices. PSM is particularly effective when launching new products, entering new categories and assessing consumer price expectations, where no data on actual purchasing behaviour exists.",
+        ],
+        usage: {
+          intro: "The method is recommended when you need to:",
+          items: [
+            "prepare a product for entering a new market",
+            "adjust the pricing strategy",
+            "assess how the market will react to a price change",
+            "find the balance between the perceived value of the product and its price",
+          ],
+        },
+      },
+      {
+        id: "turf",
+        title: "Range optimisation (TURF analysis)",
+        paragraphs: [
+          "TURF analysis is an analytical method that determines which combination of products delivers the maximum reach of the target audience with the smallest number of options. It is widely used to optimise product lines.",
+          "The method analyses the overlap between the preferences of different consumer groups. Unlike a simple popularity assessment of individual attributes, TURF takes into account that the same audience may choose several options at once. The task is therefore not to find the single most popular item, but to select the combination that reaches the largest number of unique consumers. This makes it possible to optimise the range without losing potential demand and to allocate company resources sensibly.",
+        ],
+        usage: {
+          intro: "TURF analysis is recommended when you need to:",
+          items: [
+            "choose the optimal set of new products to launch",
+            "determine the most effective set of flavours, pack formats or SKUs",
+            "assess the potential reach of different product combinations",
+            "optimise the range without losing a significant share of buyers",
+            "set the launch priority for products",
+          ],
+        },
+      },
+    ],
+  },
+  {
+    id: "customer-experience",
+    title: "Improve the customer experience",
+    summary:
+      "Methods for assessing the customer experience, the quality of interaction and the factors that drive customer satisfaction and loyalty.",
+    methods: [
+      {
+        id: "nps",
+        title: "NPS (Net Promoter Score)",
+        paragraphs: [
+          "NPS (Net Promoter Score) is a metric that measures brand loyalty. The method is based on the customer's willingness to recommend the company on a scale from 0 to 10. Consumers fall into 3 categories: detractors (scores 0 to 6), passives (scores 7-8) and promoters (scores 9-10). The loyalty level is the difference between the share of promoters and the share of detractors.",
+          "The practical value of the study lies not only in calculating the index itself, but in analysing the reasons behind the score. NPS is therefore always accompanied by open questions that reveal the factors shaping loyalty, the drivers of recommendation, the causes of dissatisfaction and the priority areas for improving the customer experience. NPS becomes most informative when it is tracked regularly and compared with the competitive environment.",
+        ],
+        usage: {
+          intro: "An NPS study is recommended when you need to:",
+          items: [
+            "measure the level of customer loyalty",
+            "understand which improvements customers want",
+            "assess the effectiveness of changes in service",
+            "reduce churn",
+            "understand why some regions and branches perform better than others",
+            "increase revenue per customer",
+          ],
+        },
+      },
+      {
+        id: "cx-metrics",
+        title: "Customer experience metrics: CSAT, CSI and CES",
+        paragraphs: [
+          "CSI (Customer Satisfaction Index) measures satisfaction with a product. The customer rates how much they liked the product on a scale from 1 to 5; a 7- or 10-point scale is sometimes used. The final figure is calculated either as an average score or as the share of satisfied customers, depending on the measurement system chosen.",
+          "CSAT (Customer Satisfaction Score) evaluates a specific experience of interacting with the company. The respondent is asked “How satisfied are you with…?” in relation to a particular event: a purchase, a delivery, a support request, a store visit or another interaction. It is especially useful for the day-to-day quality control of individual service stages and for spotting situations where customer expectations were not met.",
+          "CES (Customer Effort Score) measures how easy it was for the customer to get their task done. The question is framed around effort, for example: “How easy was it to resolve your issue?” or “How easy was it to place your order?”. CES measures not satisfaction with the outcome, but how simple the interaction itself was.",
+        ],
+      },
+      {
+        id: "cjm",
+        title: "CJM (Customer Journey Map)",
+        paragraphs: [
+          "CJM (Customer Journey Map) is a customer experience research method that reconstructs the full path of a user's interaction with a company, product or service. Unlike a description of internal business processes, a CJM reflects the sequence of the customer's actions, their goals, expectations, emotions and decisions at every stage of the interaction. The method lets you look at the product through the user's eyes and identify why a customer decides to continue the interaction or to abandon it.",
+          "The study analyses touchpoints, behavioural scenarios, choice drivers, the barriers that arise, emotional dynamics and the factors that influence the transition between stages of the journey. This turns the CJM into more than a visual diagram: it becomes a tool for finding systemic customer experience problems and setting priorities for the development of product, service and communications.",
+        ],
+        usage: {
+          intro: "Building a CJM is recommended when you need to:",
+          items: [
+            "improve service quality",
+            "identify why users are lost at different stages of the funnel",
+            "determine the growth points of the customer experience",
+            "increase conversion between interaction stages",
+            "align the work of marketing, product and customer service",
+            "produce recommendations for improving the customer experience (CX) and optimising business processes",
+          ],
+        },
+      },
+      {
+        id: "ui-research",
+        title: "UI research (User Interface)",
+        paragraphs: [
+          "UI research (User Interface) evaluates the quality of a digital product's user interface. Unlike UX research, which analyses the user experience as a whole, UI research focuses on the effectiveness of individual interface elements: navigation, screen structure, visual hierarchy, legibility, the placement of controls and the quality of visual communication. Its main purpose is to determine how well the interface helps the user complete target actions quickly and without errors.",
+          "The research can be carried out both at the interface design stage and after the product has launched. A comprehensive approach reveals not only obvious design mistakes but also hidden barriers that affect conversion, task completion speed and the subjective sense of how convenient the product is.",
+        ],
+        usage: {
+          intro: "UI research is recommended when you need to:",
+          items: [
+            "assess how convenient the interface is",
+            "find the reasons behind low conversion",
+            "validate a new version of the design",
+            "identify navigation errors",
+            "speed up the completion of user scenarios",
+          ],
+        },
+      },
+    ],
+  },
+  {
+    id: "decision-measurement",
+    title: "Measure and justify decisions",
+    methods: [
+      {
+        id: "likert",
+        title: "The Likert scale",
+        paragraphs: [
+          "The Likert scale measures consumer attitudes, opinions and dispositions that cannot be measured directly. The method is a set of statements, each reflecting a different aspect of the subject under study. The respondent rates their degree of agreement with each one on a scale (for example, from 1 to 5). The resulting composite figure is treated as a quantitative measure of the characteristic being studied - satisfaction, trust, engagement, attitude to the brand, product innovativeness or any other latent variable.",
+          "Suppose you need to measure trust in a brand. Instead of a single question, the respondent is given a series of statements: “I trust this brand”, “This brand keeps its promises”, “This brand is honest with its customers”, “I am confident in the quality of the brand's products”, “I would keep using this brand”. Each statement measures one facet of the construct of trust. Using several statements to describe the subject under study yields reliable and statistically robust measures of attitude towards it.",
+        ],
+        note: "In marketing research the term “Likert scale” is often used incorrectly for any question rated on a 1-5 or 1-7 scale. Methodologically this is wrong. A classic Likert scale is a series of interrelated statements measuring one latent construct, and the final result is a summed or normalised index across the whole scale, not the score on a single question.",
+        usage: {
+          intro: "The method is especially useful when you need to:",
+          items: [
+            "measure consumer attitudes quantitatively",
+            "assess complex characteristics that cannot be captured by a single question (for example trust, satisfaction, perceived quality, innovativeness or emotional attachment)",
+            "compare attitude levels across different audience segments",
+            "track how consumer attitudes change over time",
+          ],
+        },
+      },
+      {
+        id: "cognitive-testing",
+        title: "Cognitive testing",
+        paragraphs: [
+          "Cognitive testing is a method that checks how customers understand text-based creative: slogans, the value proposition, advertising messages and names. A product named “multivert”, for example, may be understood as a device with several speeds rather than one that can turn, drill, saw and mix. Some terms may not be fully clear, or customers may read their own meanings into them, and that can be the reason behind poor sales. We test not only individual wordings but also how the concept is perceived as a whole.",
+        ],
+        usage: {
+          intro: "Cognitive testing works when you need to:",
+          items: [
+            "test instructions or advertising materials",
+            "eliminate ambiguous wording",
+            "make sure no unexpected associations arise that distort the intended image",
+            "assess how the customer decodes the design and the description",
+          ],
+        },
+      },
+    ],
+  },
+];
+
+export const solutionSections: Record<Locale, SolutionSection[]> = { ru, en };

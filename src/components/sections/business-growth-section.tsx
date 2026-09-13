@@ -1,16 +1,11 @@
 import { FadeIn } from "@/components/motion/fade-in";
 import { SectionContainer } from "@/components/ui/section-container";
+import { homeContent } from "@/data/home";
+import { getLocale } from "@/lib/get-locale";
 
-const growthTasks = [
-  "Поиск правильных сегментов и точек роста продаж",
-  "Оптимизация клиентского пути",
-  "Улучшение пользовательского опыта",
-  "Разработка и проверка продуктовых гипотез",
-  "Оценка новых идей и концепций",
-  "Понимание потребностей и мотивации клиентов",
-];
+export async function BusinessGrowthSection() {
+  const { businessGrowth } = homeContent[await getLocale()];
 
-export function BusinessGrowthSection() {
   return (
     <section className="py-12 sm:py-20">
       <SectionContainer>
@@ -18,14 +13,14 @@ export function BusinessGrowthSection() {
           <div className="grid gap-4 lg:grid-cols-[1.6fr_1fr]">
             <article className="glass-card-l2 rounded-3xl p-6 sm:p-8">
               <h2 className="font-serif text-3xl leading-tight text-[var(--color-midnight)] sm:text-4xl">
-                Глубокое понимание клиентов - быстрые бизнес-результаты
+                {businessGrowth.title}
               </h2>
               <div className="mt-5 h-px w-24 bg-[linear-gradient(90deg,rgba(108,92,231,0.55),rgba(108,92,231,0))]" />
               <p className="mt-7 text-xl font-medium leading-relaxed text-[var(--color-midnight)]">
-                Мы работаем с задачами роста и развития бизнеса:
+                {businessGrowth.lead}
               </p>
               <ul className="mt-4 space-y-2.5 text-[17px] leading-relaxed text-[#374151]">
-                {growthTasks.map((task) => (
+                {businessGrowth.tasks.map((task) => (
                   <li key={task} className="flex items-start gap-3">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent-indigo)]" />
                     <span>{task}</span>
@@ -33,26 +28,22 @@ export function BusinessGrowthSection() {
                 ))}
               </ul>
               <p className="mt-7 text-lg leading-relaxed text-[var(--color-accent-violet)]">
-                Каждое исследование заканчивается не отчетом, а рекомендациями.
+                {businessGrowth.outcome}
               </p>
             </article>
 
             <div className="grid gap-4">
               <article className="surface-panel rounded-3xl p-6 sm:p-8">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-                  В чем наша ценность
+                  {businessGrowth.valueLabel}
                 </p>
                 <p className="mt-3 text-lg leading-relaxed text-[var(--color-midnight)]">
-                  Мы не просто проводим исследования - мы помогаем бизнесу находить
-                  ответы на ключевые вопросы.
+                  {businessGrowth.valueText}
                 </p>
               </article>
 
               <article className="rounded-3xl border border-[rgba(255,255,255,0.25)] bg-[linear-gradient(140deg,rgba(11,18,32,0.98),rgba(26,35,56,0.96))] p-6 text-white shadow-[0_22px_55px_rgba(2,6,23,0.42)]">
-                <p className="text-sm leading-relaxed text-white/95">
-                  Фокус не на отчете, а на решениях, которые можно внедрять сразу
-                  после исследования.
-                </p>
+                <p className="text-sm leading-relaxed text-white/95">{businessGrowth.focusText}</p>
               </article>
             </div>
           </div>

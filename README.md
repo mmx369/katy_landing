@@ -65,20 +65,55 @@ IP клиента берётся из `X-Real-IP`, который простав
 
 При изменении текста согласия в `src/data/legal.ts` версию нужно поднять.
 
+## Локализация (ru / en)
+
+Сайт двуязычный. Русский - локаль по умолчанию и отдается без префикса, чтобы сохранить уже
+проиндексированные адреса; английский живет под `/en`.
+
+| Запрос | Что происходит |
+| --- | --- |
+| `/contacts` | `src/proxy.ts` переписывает на `/ru/contacts` |
+| `/en/contacts` | отдается как есть |
+| `/ru/contacts` | 308 на `/contacts`, чтобы не было двух URL одной страницы |
+
+- Список локалей, `localizePath`/`stripLocale` и подписи языков - `src/lib/i18n.ts`.
+- В серверных компонентах локаль берется через `getLocale()` (`src/lib/get-locale.ts`) поверх
+  `next/root-params`, без прокидывания пропсов. Клиентским компонентам (шапка, форма, карточка
+  метода) локаль и нужный срез словаря передаются пропсами, иначе в JS-бандл попали бы оба языка.
+  В Route Handlers `next/root-params` недоступен, поэтому форма шлет `locale` в теле запроса.
+- Словари лежат в `src/data/*` и экспортируются как `Record<Locale, T>`, где форма выводится из
+  русской версии (`typeof ru`). За счет этого **пропущенный или лишний ключ в `en` ломает `tsc`**.
+  Порядок и число элементов в массивах компилятор не видит - это проверяет
+  `src/data/dictionaries.test.mts` вместе с проверкой, что в английской локали не осталось кириллицы.
+- Переключатель языка - `src/components/layout/language-switcher.tsx` (шапка на десктопе,
+  бургер-меню на мобильных).
+- 404: несуществующий путь сам по себе не попадает в сегмент `[lang]`, и Next отдал бы свою
+  служебную страницу без шапки. Поэтому есть catch-all `src/app/[lang]/[...rest]/page.tsx`, который
+  вызывает `notFound()` и тем самым отдает локализованный `src/app/[lang]/not-found.tsx`.
+- Автоперенаправления по `Accept-Language` нет: язык выбирается только переключателем, поисковик
+  ориентируется на `hreflang`.
+- Английские версии `/privacy` и `/personal-data-consent` - информационный перевод. Юридическую
+  силу имеет русский текст, об этом сообщает плашка в начале документа.
+
 ## Структура проекта
 
 ```text
 src/
   app/
-    page.tsx
-    research-solutions/page.tsx
-    marketplaces/page.tsx
-    knowledge-base/page.tsx
-    contacts/page.tsx
-    request/page.tsx
-    privacy/page.tsx
-    personal-data-consent/page.tsx
+    [lang]/
+      layout.tsx
+      page.tsx
+      research-solutions/page.tsx
+      marketplaces/page.tsx
+      knowledge-base/page.tsx
+      contacts/page.tsx
+      request/page.tsx
+      privacy/page.tsx
+      personal-data-consent/page.tsx
     api/contact/route.ts
+    robots.ts
+    sitemap.ts
+  proxy.ts
   components/
     brand/
     forms/
@@ -87,15 +122,19 @@ src/
     sections/
     ui/
   data/
+    common.ts
     contact.ts
     home.ts
     knowledge.ts
     legal.ts
     marketplace.ts
     navigation.ts
+    pages.ts
     solutions.ts
   lib/
     contact-validation.ts
+    get-locale.ts
+    i18n.ts
     seo.ts
   types/
     content.ts
@@ -104,6 +143,7 @@ src/
 ## Как расширять
 
 - Контент секций хранится в `src/data/*` - можно добавлять новые карточки и блоки без изменения UI-логики.
+  Любая правка текста делается сразу в обеих локалях одного файла, иначе не соберется типизация.
 - Каталог исследовательских решений масштабируется через `solutionSections` в `src/data/solutions.ts`:
   направление содержит методы, метод - описание, необязательный блок показателей, сноску «Важно» и список
   «Когда стоит использовать метод». Из этих же данных собирается блок услуг на главной, поэтому направления
@@ -111,5 +151,7 @@ src/
 - База знаний масштабируется через `knowledgeMethodTiles` в `src/data/knowledge.ts`.
 - Юридические тексты - `src/data/legal.ts`, обе страницы рендерит `components/sections/legal-document.tsx`.
 - Правила валидации формы общие для клиента и сервера - `src/lib/contact-validation.ts`.
-- Базовые SEO-параметры страниц централизованы через `buildMetadata` в `src/lib/seo.ts`.
+- Базовые SEO-параметры страниц централизованы через `buildMetadata` в `src/lib/seo.ts`: он же
+  проставляет canonical и `hreflang` для обеих локалей.
+- Новый роут добавляется в `src/app/[lang]/` и в список `routes` в `src/app/sitemap.ts`.
 - HTTP-заголовки безопасности задаются в `next.config.ts`.

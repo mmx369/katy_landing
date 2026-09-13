@@ -8,6 +8,9 @@ interface SiteLogoProps {
   className?: string;
   size?: "xs" | "sm" | "md";
   variant?: "mark" | "full";
+  /** Accessible name of the home link; required whenever the logo is linked. */
+  label?: string;
+  href?: string;
 }
 
 const dimensions = {
@@ -35,6 +38,8 @@ export function SiteLogo({
   className,
   size = "md",
   variant = "full",
+  label = "Decode",
+  href = "/",
 }: SiteLogoProps) {
   const { width, height } = dimensions[variant][size];
 
@@ -55,7 +60,7 @@ export function SiteLogo({
   }
 
   return (
-    <Link href="/" aria-label="Decode - на главную" onClick={onNavigate}>
+    <Link href={href} aria-label={label} onClick={onNavigate}>
       {content}
     </Link>
   );

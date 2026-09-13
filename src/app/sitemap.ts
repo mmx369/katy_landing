@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-import { siteUrl } from "@/lib/seo";
+import { defaultLocale, locales, localeMeta } from "@/lib/i18n";
+import { localeUrl, siteUrl } from "@/lib/seo";
 
 const routes = [
   "/",
@@ -20,8 +21,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     return [];
   }
 
-  return routes.map((route) => ({
-    url: `${siteUrl}${route}`,
-    lastModified,
-  }));
+  return routes.flatMap((route) => {
+    const languages = Object.fromEntries(
+      locales.map((locale) => [localeMeta[locale].hrefLang, localeUrl(route, locale)])
+    );
+
+    return locales.map((locale) => ({
+      url: localeUrl(route, locale),
+      lastModified,
+      alternates: {
+        languages: { ...languages, "x-default": localeUrl(route, defaultLocale) },
+      },
+    }));
+  });
 }

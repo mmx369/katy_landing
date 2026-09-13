@@ -6,9 +6,15 @@ import { FadeIn } from "@/components/motion/fade-in";
 import { AnimatedBackgroundBlobs } from "@/components/sections/animated-background-blobs";
 import { Button } from "@/components/ui/button";
 import { SectionContainer } from "@/components/ui/section-container";
-import { homeHero, homeMetrics } from "@/data/home";
+import type { HomeContent } from "@/data/home";
+import { localizePath, type Locale } from "@/lib/i18n";
 
-export function HeroSection() {
+interface HeroSectionProps {
+  locale: Locale;
+  content: HomeContent["hero"];
+}
+
+export function HeroSection({ locale, content }: HeroSectionProps) {
   return (
     <section className="hero-stage relative overflow-hidden pb-14 pt-8 sm:pb-24 sm:pt-14">
       <AnimatedBackgroundBlobs />
@@ -46,19 +52,19 @@ export function HeroSection() {
                 }}
               >
                 <p className="mb-5 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-muted)]">
-                  Бюро маркетинговых исследований
+                  {content.eyebrow}
                 </p>
                 <h1 className="font-serif text-3xl leading-[1.08] tracking-[-0.022em] text-[var(--color-midnight)] sm:text-5xl lg:text-[3.4rem]">
-                  {homeHero.title}
+                  {content.title}
                 </h1>
                 <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--color-muted-strong)] sm:text-lg">
-                  {homeHero.description}
+                  {content.description}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  {homeHero.actions.map((action) => (
+                  {content.actions.map((action) => (
                     <Button
                       key={action.href}
-                      href={action.href}
+                      href={localizePath(action.href, locale)}
                       variant={action.variant ?? "primary"}
                       className="w-full text-center sm:w-auto"
                     >
@@ -79,7 +85,7 @@ export function HeroSection() {
                   },
                 }}
               >
-                {homeMetrics.map((metric) => (
+                {content.metrics.map((metric) => (
                   <motion.div
                     key={metric.label}
                     className="hero-stat-card rounded-2xl p-4"

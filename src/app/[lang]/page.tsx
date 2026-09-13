@@ -10,20 +10,24 @@ import { ResearchTypesSection } from "@/components/sections/research-types-secti
 import { ServicesMethodsSection } from "@/components/sections/services-methods-section";
 import { TeamContactsSection } from "@/components/sections/team-contacts-section";
 import { WorkflowSection } from "@/components/sections/workflow-section";
-import { homeCta } from "@/data/home";
+import { homeContent } from "@/data/home";
+import { pageContent } from "@/data/pages";
+import { getLocale } from "@/lib/get-locale";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Decode Research - маркетинговое исследовательское агентство",
-  description:
-    "Маркетинговое исследовательское агентство Decode Research: сегментации, тестирование коммуникаций, CX-исследования, CustDev и аудит карточек для маркетплейсов.",
-  path: "/",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const { site } = pageContent[locale];
 
-export default function HomePage() {
+  return buildMetadata({ title: site.title, description: site.description, locale, path: "/" });
+}
+
+export default async function HomePage() {
+  const locale = await getLocale();
+
   return (
     <>
-      <HeroSection />
+      <HeroSection locale={locale} content={homeContent[locale].hero} />
       <AboutSlideSection />
       <BusinessGrowthSection />
       <ResearchTypesSection />
@@ -32,12 +36,7 @@ export default function HomePage() {
       <AdvantagesSection />
       <ExpertiseCategoriesSection />
       <TeamContactsSection />
-      <CTASection
-        title={homeCta.title}
-        description={homeCta.description}
-        actionLabel={homeCta.actionLabel}
-        actionHref={homeCta.actionHref}
-      />
+      <CTASection />
     </>
   );
 }

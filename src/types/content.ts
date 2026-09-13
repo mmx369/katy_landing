@@ -1,6 +1,8 @@
 export interface NavItem {
   label: string;
   href: string;
+  /** Attached by the layout for items that expand into a submenu. */
+  submenu?: NavItem[];
 }
 
 export interface HeroAction {

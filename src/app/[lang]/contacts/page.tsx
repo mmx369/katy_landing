@@ -5,25 +5,38 @@ import { FadeIn } from "@/components/motion/fade-in";
 import { PageHero } from "@/components/sections/page-hero";
 import { Card } from "@/components/ui/card";
 import { SectionContainer } from "@/components/ui/section-container";
-import { contactInfo } from "@/data/contact";
+import { commonContent } from "@/data/common";
+import { contactContent, contactInfo } from "@/data/contact";
+import { consentVersion } from "@/data/legal";
+import { pageContent } from "@/data/pages";
+import { getLocale } from "@/lib/get-locale";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Контакты - Decode Research",
-  description:
-    "Свяжитесь с Decode Research: обсудим маркетинговое исследование, задачи бренда, продукта, CX или маркетплейсов и предложим формат проекта.",
-  path: "/contacts",
-});
+const PATH = "/contacts";
 
-export default function ContactsPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const { contacts } = pageContent[locale];
+
+  return buildMetadata({
+    title: contacts.title,
+    description: contacts.description,
+    locale,
+    path: PATH,
+  });
+}
+
+export default async function ContactsPage() {
+  const locale = await getLocale();
+  const { contacts } = pageContent[locale];
   const phoneHref = `tel:${contactInfo.phone.replace(/\D/g, "")}`;
 
   return (
     <>
       <PageHero
-        eyebrow="Контакты"
-        title="Обсудим задачу и подберем формат исследования"
-        description="Расскажите о контексте бизнеса и текущем вопросе. Мы предложим подход, сроки и формат взаимодействия."
+        eyebrow={contacts.eyebrow}
+        title={contacts.heroTitle}
+        description={contacts.heroDescription}
       />
       <section className="pb-12 pt-4 sm:pb-20">
         <SectionContainer>
@@ -31,11 +44,11 @@ export default function ContactsPage() {
             <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr]">
               <Card>
                 <h2 className="text-2xl font-semibold text-[var(--color-midnight)]">
-                  Контактная информация
+                  {contacts.infoTitle}
                 </h2>
                 <ul className="mt-5 space-y-3 text-sm text-[var(--color-muted-strong)]">
                   <li>
-                    Email:{" "}
+                    {contacts.emailLabel}{" "}
                     <a
                       href={`mailto:${contactInfo.email}`}
                       className="font-medium text-[var(--color-midnight)]"
@@ -44,7 +57,7 @@ export default function ContactsPage() {
                     </a>
                   </li>
                   <li>
-                    Телефон:{" "}
+                    {contacts.phoneLabel}{" "}
                     <a
                       href={phoneHref}
                       className="font-medium text-[var(--color-midnight)]"
@@ -54,19 +67,23 @@ export default function ContactsPage() {
                   </li>
                 </ul>
                 <p className="mt-5 text-sm text-[var(--color-muted)]">
-                  {contactInfo.responseTime}
+                  {contactContent[locale].responseTime}
                 </p>
               </Card>
               <Card glass>
                 <h2 className="text-2xl font-semibold text-[var(--color-midnight)]">
-                  Форма обратной связи
+                  {contacts.formTitle}
                 </h2>
                 <p className="mt-3 text-sm text-[var(--color-muted-strong)]">
-                  Опишите контекст задачи, а мы вернемся с первым предложением по
-                  исследовательскому дизайну.
+                  {contacts.formDescription}
                 </p>
                 <div className="mt-6">
-                  <ContactForm variant="contact" />
+                  <ContactForm
+                    variant="contact"
+                    locale={locale}
+                    labels={commonContent[locale].form}
+                    consentVersion={consentVersion}
+                  />
                 </div>
               </Card>
             </div>

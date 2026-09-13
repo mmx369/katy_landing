@@ -3,24 +3,30 @@ import Image from "next/image";
 import { FadeIn } from "@/components/motion/fade-in";
 import { SiteLogo } from "@/components/brand/site-logo";
 import { SectionContainer } from "@/components/ui/section-container";
-import { contactInfo, teamMembers } from "@/data/contact";
+import { contactContent, contactInfo } from "@/data/contact";
+import { homeContent } from "@/data/home";
+import { getLocale } from "@/lib/get-locale";
 
-export function TeamContactsSection() {
+export async function TeamContactsSection() {
+  const locale = await getLocale();
+  const { team } = homeContent[locale];
+  const phoneHref = `tel:${contactInfo.phone.replace(/\D/g, "")}`;
+
   return (
     <section className="py-12 sm:py-20">
       <SectionContainer>
         <FadeIn>
           <header className="max-w-3xl">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
-              Команда и контакты
+              {team.eyebrow}
             </p>
             <h2 className="font-serif text-3xl leading-tight text-[var(--color-midnight)] sm:text-4xl">
-              Команда, с которой вы работаете напрямую
+              {team.title}
             </h2>
           </header>
 
           <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {teamMembers.map((member) => (
+            {contactContent[locale].team.map((member) => (
               <article key={member.name} className="surface-panel glass-card-l2 rounded-3xl p-6">
                 <div className="group relative mb-5 aspect-square w-full overflow-hidden rounded-[24px] bg-[linear-gradient(145deg,rgba(244,245,248,0.94),rgba(228,231,236,0.9))] [box-shadow:inset_0_2px_5px_rgba(255,255,255,0.5),inset_0_-7px_14px_rgba(110,116,128,0.25),inset_7px_0_12px_rgba(255,255,255,0.16),inset_-7px_0_12px_rgba(114,121,135,0.18),0_16px_28px_rgba(36,44,62,0.16)]">
                   <div className="absolute inset-[10px] overflow-hidden rounded-[16px] bg-[linear-gradient(180deg,rgba(255,255,255,0.3),rgba(255,255,255,0.1))]">
@@ -66,14 +72,14 @@ export function TeamContactsSection() {
               </h3>
               <ul className="mt-4 space-y-2 text-sm text-[var(--color-muted-strong)]">
                 <li>
-                  Email:{" "}
+                  {team.emailLabel}{" "}
                   <a href={`mailto:${contactInfo.email}`} className="font-medium text-[var(--color-midnight)]">
                     {contactInfo.email}
                   </a>
                 </li>
                 <li>
-                  Тел:{" "}
-                  <a href="tel:+79652963249" className="font-medium text-[var(--color-midnight)]">
+                  {team.phoneLabel}{" "}
+                  <a href={phoneHref} className="font-medium text-[var(--color-midnight)]">
                     {contactInfo.phone}
                   </a>
                 </li>

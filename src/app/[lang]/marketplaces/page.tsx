@@ -6,30 +6,39 @@ import { PageHero } from "@/components/sections/page-hero";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { SectionContainer } from "@/components/ui/section-container";
-import { marketplaceCaseBlocks, marketplaceHero } from "@/data/marketplace";
+import { marketplaceContent } from "@/data/marketplace";
+import { pageContent } from "@/data/pages";
+import { getLocale } from "@/lib/get-locale";
+import { localizePath } from "@/lib/i18n";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Маркетплейсы - Decode Research",
-  description:
-    "Аудит карточек и сессии восприятия для маркетплейсов: выявляем барьеры покупки, улучшаем структуру карточки и повышаем конверсию.",
-  path: "/marketplaces",
-});
+const PATH = "/marketplaces";
 
-export default function MarketplacesPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const { marketplaces } = pageContent[locale];
+
+  return buildMetadata({
+    title: marketplaces.title,
+    description: marketplaces.description,
+    locale,
+    path: PATH,
+  });
+}
+
+export default async function MarketplacesPage() {
+  const locale = await getLocale();
+  const { hero, blocks, swipeHint, ctaLabel } = marketplaceContent[locale];
+
   return (
     <>
-      <PageHero
-        eyebrow="Маркетплейсы"
-        title={marketplaceHero.title}
-        description={marketplaceHero.description}
-      />
+      <PageHero eyebrow={hero.eyebrow} title={hero.title} description={hero.description} />
 
       <section className="pb-12 pt-5 sm:pb-20 sm:pt-10">
         <SectionContainer>
           <FadeIn>
             <div className="space-y-6">
-              {marketplaceCaseBlocks.map((block) => (
+              {blocks.map((block) => (
                 <Card key={block.sectionTitle} className="p-0">
                   <div className="border-b border-[var(--color-border)] px-6 py-4 sm:px-8">
                     <p className="text-sm text-[var(--color-muted)]">
@@ -90,17 +99,18 @@ export default function MarketplacesPage() {
                         </div>
                       </div>
                     </div>
-                    <p className="mt-2 text-xs text-[var(--color-muted)] sm:hidden">
-                      Свайпните изображение влево/вправо, чтобы рассмотреть детали.
-                    </p>
+                    <p className="mt-2 text-xs text-[var(--color-muted)] sm:hidden">{swipeHint}</p>
                   </div>
                 </Card>
               ))}
             </div>
 
             <div className="mt-8">
-              <Button href="/request" className="w-full text-center sm:mx-auto sm:w-auto">
-                Обсудить карточки на маркетплейсах
+              <Button
+                href={localizePath("/request", locale)}
+                className="w-full text-center sm:mx-auto sm:w-auto"
+              >
+                {ctaLabel}
               </Button>
             </div>
           </FadeIn>
